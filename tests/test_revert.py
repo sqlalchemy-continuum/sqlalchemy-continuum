@@ -1,5 +1,5 @@
+import pytest
 import sqlalchemy as sa
-from pytest import raises
 
 from sqlalchemy_continuum.reverter import Reverter, ReverterException
 from tests import TestCase
@@ -15,7 +15,7 @@ class TestReverter(TestCase):
         self.session.commit()
         version = article.versions[0]
 
-        with raises(ReverterException):
+        with pytest.raises(ReverterException):
             Reverter(version, relations=['unknown_relation'])
 
 
@@ -133,6 +133,17 @@ class RevertTestCase(TestCase):
         self.session.commit()
         assert len(article.tags) == 2
         assert article.tags[0].name == 'some tag'
+
+    @pytest.mark.filterwarnings('error::sqlalchemy.exc.SAWarning')
+    def test_revert_with_nested_transaction_warning(self):
+        article = self.Article(name='Some article')
+        self.session.add(article)
+        self.session.commit()
+        self.session.begin_nested()
+        article.name = 'Updated name'
+        self.session.commit()
+        assert article.versions.count() == 2
+        assert article.versions.all()[-1].name == 'Updated name'
 
 
 class TestRevertWithDefaultVersioningStrategy(RevertTestCase):
