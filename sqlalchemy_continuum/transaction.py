@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from collections import OrderedDict
 from datetime import datetime
 import sys
@@ -12,6 +14,7 @@ from .dialects.postgresql import (
 )
 from .exc import ImproperlyConfigured
 from .factory import ModelFactory
+from .utils import declarative_base_resolver
 
 
 # Compatibility function for datetime.utcnow() deprecation
@@ -152,7 +155,7 @@ class TransactionFactory(ModelFactory):
 
             if manager.user_cls:
                 user_cls = manager.user_cls
-                Base = manager.declarative_base
+                Base = declarative_base_resolver(manager.declarative_base)
                 registry = Base.registry._class_registry
 
                 if isinstance(user_cls, str):
