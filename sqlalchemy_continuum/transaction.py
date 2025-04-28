@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from collections import OrderedDict
 from datetime import datetime
 import sys
