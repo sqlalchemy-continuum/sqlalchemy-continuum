@@ -39,7 +39,6 @@ dependencies = [
 flask = ["Flask>=2.0"]
 flask-login = ["Flask-Login>=0.6"]
 flask-sqlalchemy = ["Flask-SQLAlchemy>=3.0"]
-sqlmodel = ['SQLModel>=0.0.24']
 
 [project.urls]
 Homepage = "https://github.com/sqlalchemy-continuum/sqlalchemy-continuum"
@@ -113,6 +112,7 @@ test = [
     "Flask>=2.0",
     "Flask-Login>=0.6",
     "Flask-SQLAlchemy>=3.0",
+    "SQLModel>=0.0.24",
     "packaging",
 ]
 docs = [

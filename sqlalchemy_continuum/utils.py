@@ -10,7 +10,7 @@ from ._compat import (
     get_primary_keys,
     identity,
     naturally_equivalent,
-    get_declarative_base
+    get_declarative_base,
 )
 from .exc import ClassNotVersioned
 
@@ -416,10 +416,11 @@ class VersioningClauseAdapter(sa.sql.visitors.ReplacingCloningVisitor):
 
 class DeclarativeBaseResolver:
     """Resolves declarative base class from either SQLModel or sqlalchemy registry."""
+
     _sa_base = None
 
     def __call__(self, model):
-        if hasattr(model, "registry"):
+        if hasattr(model, 'registry'):
             # This is NOT SQLModel
             return get_declarative_base(model)
         else:
