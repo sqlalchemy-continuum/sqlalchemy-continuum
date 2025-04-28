@@ -30,11 +30,7 @@ def get_base_class(manager, model):
     """
     Returns all base classes for history model.
     """
-    return (
-        option(model, 'base_classes')
-        or
-        (declarative_base_resolver(model), )
-    )
+    return option(model, 'base_classes') or (declarative_base_resolver(model),)
 
 
 def version_base(manager, parent_cls, base_class_factory=None):
