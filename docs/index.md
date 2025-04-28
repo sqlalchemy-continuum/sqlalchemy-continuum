@@ -17,6 +17,7 @@ covers the [feature set](intro.md#features), installation and basic usage.
 - [Queries](queries.md)
 - [Transactions](transactions.md)
 - [Native versioning](native_versioning.md)
+- [SQLModel](sqlmodel.md)
 - [Plugins](plugins.md)
 - [Configuration](configuration.md)
 - [Continuum schema](schema.md)
