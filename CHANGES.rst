@@ -6,7 +6,7 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
 - **MAJOR**: Remove SQLAlchemy-Utils dependency by porting required functions to internal _compat module (#352)
-  
+  - Miscellaneous updates to type annotations
   - Port core functions: ImproperlyConfigured, get_declarative_base, naturally_equivalent
   - Port column utilities: get_columns, get_primary_keys, identity, get_column_key
   - Port advanced functionality: has_changes, JSONType, generic_relationship with full SQLAlchemy 2.x compatibility
