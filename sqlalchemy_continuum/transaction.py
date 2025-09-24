@@ -42,7 +42,7 @@ class NoChangesAttribute(Exception):
 
 
 class TransactionBase:
-    issued_at = sa.Column(sa.DateTime, default=utc_now)
+    issued_at = sa.Column(sa.DateTime(timezone=True), default=utc_now)
 
     @property
     def entity_names(self):
