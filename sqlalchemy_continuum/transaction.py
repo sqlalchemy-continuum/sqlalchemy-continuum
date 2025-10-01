@@ -25,8 +25,9 @@ def utc_now():
     if sys.version_info >= (3, 11):
         # Use the new recommended approach
         from datetime import timezone
-
-        return datetime.now(timezone.utc)
+        # Generate the current time in UTC, and then strip tzinfo
+        # since the issued_at column below is not tz-aware
+        return datetime.now(timezone.utc).replace(tzinfo=None)
     else:
         # Fall back to the old approach for compatibility
         return datetime.utcnow()
