@@ -5,7 +5,11 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
-- TODO
+- None currently
+
+1.5.1 (2025-10-01)
+^^^^^^^^^^^^^^^^^^
+- Fix utc_now() to return a naive datetime (#373, thanks to dawhalen)
 
 1.5.0 (2025-08-30)
 ^^^^^^^^^^^^^^^^^^
