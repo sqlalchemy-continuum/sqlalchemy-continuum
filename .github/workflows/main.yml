@@ -86,8 +86,3 @@ jobs:
         run: uv run pytest
         env:
           DB: ${{ matrix.db-engine }}
-
-  all:
-    name: Run all jobs
-    needs: [lint, test]
-
