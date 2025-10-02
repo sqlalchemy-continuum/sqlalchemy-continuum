@@ -40,11 +40,13 @@ test = [
     "Flask>=0.9",
     "Flask-Login>=0.2.9",
     "Flask-SQLAlchemy>=1.0",
+    "SQLModel>=0.0.24",
     "packaging",
 ]
 flask = ["Flask>=0.9"]
 flask-login = ["Flask-Login>=0.2.9"]
 flask-sqlalchemy = ["Flask-SQLAlchemy>=1.0"]
+sqlmodel = ["SQLModel>=0.0.24"]
 dev = [
     "ruff>=0.1.0",
     "tox>=4.0.0",
