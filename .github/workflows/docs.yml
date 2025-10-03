@@ -27,29 +27,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-
+      
       - name: Set up Python
         run: uv python install 3.13
-
+      
       - name: Create virtual environment
         run: uv venv
-
+      
       - name: Install dependencies
         run: uv pip install -e '.[docs]'
-
+      
       - name: Build documentation
         run: |
           cd docs
           uv run sphinx-build -b html . _build/html
-
+      
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
-
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
