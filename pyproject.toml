@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "SQLAlchemy-Continuum"
-version = "2.0.0"
+version = "1.5.1"
 description = "Versioning and auditing extension for SQLAlchemy."
 readme = "README.rst"
 license = "BSD-3-Clause"

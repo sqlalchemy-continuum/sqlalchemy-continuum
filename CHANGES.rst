@@ -5,13 +5,11 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
-- **MAJOR**: Remove SQLAlchemy-Utils dependency by porting required functions to internal _compat module (#352)
-  - Miscellaneous updates to type annotations
-  - Port core functions: ImproperlyConfigured, get_declarative_base, naturally_equivalent
-  - Port column utilities: get_columns, get_primary_keys, identity, get_column_key
-  - Port advanced functionality: has_changes, JSONType, generic_relationship with full SQLAlchemy 2.x compatibility
-  - Maintain full backward compatibility while eliminating external dependency
-  - Reduce installation footprint and potential version conflicts
+- None currently
+
+1.5.1 (2025-10-01)
+^^^^^^^^^^^^^^^^^^
+- Fix utc_now() to return a naive datetime (#373, thanks to dawhalen)
 
 1.5.0 (2025-08-30)
 ^^^^^^^^^^^^^^^^^^
@@ -30,6 +28,13 @@ Unreleased changes
 - Fix datetime.utcnow() deprecation warnings with cross-version compatibility function supporting Python 3.9-3.13+
 - Eliminate cartesian product warnings in many-to-many relationship queries with non-versioned classes
 - Improve code quality by modernizing mixed string formatting patterns to f-strings
+- **MAJOR**: Remove SQLAlchemy-Utils dependency by porting required functions to internal _compat module (#352)
+  
+  - Port core functions: ImproperlyConfigured, get_declarative_base, naturally_equivalent
+  - Port column utilities: get_columns, get_primary_keys, identity, get_column_key
+  - Port advanced functionality: has_changes, JSONType, generic_relationship with full SQLAlchemy 2.x compatibility
+  - Maintain full backward compatibility while eliminating external dependency
+  - Reduce installation footprint and potential version conflicts
 
 1.4.2 (2024-03-26)
 ^^^^^^^^^^^^^^^^^^
