@@ -49,7 +49,7 @@ def make_versioned(
     manager=versioning_manager,
     plugins=None,
     options=None,
-    user_cls='User',
+    user_cls: str | None = 'User',
 ):
     """
     This is the public API function of SQLAlchemy-Continuum for making certain
