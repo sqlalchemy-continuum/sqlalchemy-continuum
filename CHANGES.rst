@@ -7,6 +7,10 @@ Unreleased changes
 ^^^^^^^^^^^^^^^^^^
 - None currently
 
+1.5.2 (2025-10-10)
+^^^^^^^^^^^^^^^^^^
+- Add Python 3.14 support
+
 1.5.1 (2025-10-01)
 ^^^^^^^^^^^^^^^^^^
 - Fix utc_now() to return a naive datetime (#373, thanks to dawhalen)
