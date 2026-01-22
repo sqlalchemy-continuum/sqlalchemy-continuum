@@ -64,7 +64,9 @@ class VersionClassBase:
         )
 
     @classmethod
-    def version_at(cls, session, primary_key_values: Dict, transaction_id: int) -> Optional['VersionClassBase']:
+    def version_at(
+        cls, session, primary_key_values: Dict, transaction_id: int
+    ) -> Optional['VersionClassBase']:
         """
         Efficiently retrieve the version that was active at a specific transaction.
 

@@ -55,7 +55,9 @@ class VersionObjectFetcher:
         """
         return self.next_query(obj).first()
 
-    def version_at(self, session, version_cls, primary_key_values: dict, transaction_id: int):
+    def version_at(
+        self, session, version_cls, primary_key_values: dict, transaction_id: int
+    ):
         """
         Returns the version that was active at the given transaction_id.
 
@@ -72,7 +74,7 @@ class VersionObjectFetcher:
         :param transaction_id: The transaction ID to query at
         :returns: The version object active at that transaction, or None
         """
-        raise NotImplementedError("Subclasses must implement version_at")
+        raise NotImplementedError('Subclasses must implement version_at')
 
     def all_versions(
         self,
@@ -140,7 +142,9 @@ class VersionObjectFetcher:
             if desc:
                 # In descending order: next is at lower index, previous is at higher index
                 version._next_cache = versions[i - 1] if i > 0 else None
-                version._previous_cache = versions[i + 1] if i < len(versions) - 1 else None
+                version._previous_cache = (
+                    versions[i + 1] if i < len(versions) - 1 else None
+                )
             else:
                 # In ascending order: previous is at lower index, next is at higher index
                 version._previous_cache = versions[i - 1] if i > 0 else None
@@ -241,7 +245,9 @@ class SubqueryFetcher(VersionObjectFetcher):
         """
         return self._next_prev_query(obj, 'next')
 
-    def version_at(self, session, version_cls, primary_key_values: dict, transaction_id: int):
+    def version_at(
+        self, session, version_cls, primary_key_values: dict, transaction_id: int
+    ):
         """
         Returns the version that was active at the given transaction_id.
 
@@ -266,10 +272,7 @@ class SubqueryFetcher(VersionObjectFetcher):
         return (
             session.query(version_cls)
             .filter(
-                sa.and_(
-                    getattr(version_cls, tx_col) <= transaction_id,
-                    *pk_conditions
-                )
+                sa.and_(getattr(version_cls, tx_col) <= transaction_id, *pk_conditions)
             )
             .order_by(getattr(version_cls, tx_col).desc())
             .first()
@@ -307,7 +310,9 @@ class ValidityFetcher(VersionObjectFetcher):
             )
         )
 
-    def version_at(self, session, version_cls, primary_key_values: dict, transaction_id: int):
+    def version_at(
+        self, session, version_cls, primary_key_values: dict, transaction_id: int
+    ):
         """
         Returns the version that was active at the given transaction_id.
 
@@ -339,9 +344,9 @@ class ValidityFetcher(VersionObjectFetcher):
                     getattr(version_cls, tx_col) <= transaction_id,
                     sa.or_(
                         getattr(version_cls, end_tx_col) > transaction_id,
-                        getattr(version_cls, end_tx_col).is_(None)
+                        getattr(version_cls, end_tx_col).is_(None),
                     ),
-                    *pk_conditions
+                    *pk_conditions,
                 )
             )
             .first()

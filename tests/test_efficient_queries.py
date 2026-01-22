@@ -34,9 +34,7 @@ class EfficientQueriesTestCase(TestCase):
         # Query for version at the second transaction
         target_tx = self._get_tx_id(versions[1])
         result = self.ArticleVersion.version_at(
-            self.session,
-            {'id': article.id},
-            transaction_id=target_tx
+            self.session, {'id': article.id}, transaction_id=target_tx
         )
 
         assert result is not None
@@ -49,9 +47,7 @@ class EfficientQueriesTestCase(TestCase):
 
         # Query for a transaction ID that doesn't exist (before first version)
         result = self.ArticleVersion.version_at(
-            self.session,
-            {'id': article.id},
-            transaction_id=0
+            self.session, {'id': article.id}, transaction_id=0
         )
 
         assert result is None
@@ -66,7 +62,7 @@ class EfficientQueriesTestCase(TestCase):
         result = self.ArticleVersion.version_at(
             self.session,
             {'id': 99999},  # Non-existent ID
-            transaction_id=target_tx
+            transaction_id=target_tx,
         )
 
         assert result is None
@@ -75,10 +71,7 @@ class EfficientQueriesTestCase(TestCase):
         """Test that all_versions returns all versions of an entity."""
         article, names = self._create_article_with_versions(4)
 
-        versions = self.ArticleVersion.all_versions(
-            self.session,
-            {'id': article.id}
-        )
+        versions = self.ArticleVersion.all_versions(self.session, {'id': article.id})
 
         assert len(versions) == 4
         # Default is desc=True, so newest first
@@ -90,9 +83,7 @@ class EfficientQueriesTestCase(TestCase):
         article, names = self._create_article_with_versions(4)
 
         versions = self.ArticleVersion.all_versions(
-            self.session,
-            {'id': article.id},
-            limit=2
+            self.session, {'id': article.id}, limit=2
         )
 
         assert len(versions) == 2
@@ -105,10 +96,7 @@ class EfficientQueriesTestCase(TestCase):
         article, names = self._create_article_with_versions(4)
 
         versions = self.ArticleVersion.all_versions(
-            self.session,
-            {'id': article.id},
-            offset=1,
-            limit=2
+            self.session, {'id': article.id}, offset=1, limit=2
         )
 
         assert len(versions) == 2
@@ -121,9 +109,7 @@ class EfficientQueriesTestCase(TestCase):
         article, names = self._create_article_with_versions(4)
 
         versions = self.ArticleVersion.all_versions(
-            self.session,
-            {'id': article.id},
-            desc=False
+            self.session, {'id': article.id}, desc=False
         )
 
         assert len(versions) == 4
@@ -138,7 +124,7 @@ class EfficientQueriesTestCase(TestCase):
         versions = self.ArticleVersion.all_versions(
             self.session,
             {'id': article.id},
-            link=True  # Default
+            link=True,  # Default
         )
 
         # Check that caches are populated
@@ -157,13 +143,14 @@ class EfficientQueriesTestCase(TestCase):
         article, _ = self._create_article_with_versions(4)
 
         versions = self.ArticleVersion.all_versions(
-            self.session,
-            {'id': article.id},
-            link=False
+            self.session, {'id': article.id}, link=False
         )
 
         # Caches should not be populated
-        assert not hasattr(versions[0], '_cache_populated') or not versions[0]._cache_populated
+        assert (
+            not hasattr(versions[0], '_cache_populated')
+            or not versions[0]._cache_populated
+        )
 
     def test_all_versions_ascending_links_correctly(self):
         """Test that link_versions works correctly with ascending order."""
@@ -173,7 +160,7 @@ class EfficientQueriesTestCase(TestCase):
             self.session,
             {'id': article.id},
             desc=False,  # Ascending - oldest first
-            link=True
+            link=True,
         )
 
         # In ascending order: versions[0] is oldest, versions[-1] is newest
@@ -196,7 +183,9 @@ class CompositeIndexTestCase(TestCase):
         index_names = [idx.name for idx in version_table.indexes]
 
         expected_index = f'ix_{version_table.name}_pk_transaction_id'
-        assert expected_index in index_names, f"Expected index {expected_index} not found in {index_names}"
+        assert expected_index in index_names, (
+            f'Expected index {expected_index} not found in {index_names}'
+        )
 
     def test_validity_strategy_creates_validity_index(self):
         """Test that validity strategy creates additional validity index."""
@@ -208,7 +197,9 @@ class CompositeIndexTestCase(TestCase):
         index_names = [idx.name for idx in version_table.indexes]
 
         expected_index = f'ix_{version_table.name}_pk_validity'
-        assert expected_index in index_names, f"Expected index {expected_index} not found in {index_names}"
+        assert expected_index in index_names, (
+            f'Expected index {expected_index} not found in {index_names}'
+        )
 
 
 # Create test cases for all strategy variants

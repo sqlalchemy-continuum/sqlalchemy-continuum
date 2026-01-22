@@ -143,9 +143,7 @@ class TableBuilder:
         tx_column_name = self.option('transaction_column_name')
 
         # Get non-transaction primary key columns from parent table
-        parent_pk_columns = [
-            col.name for col in self.parent_table.primary_key.columns
-        ]
+        parent_pk_columns = [col.name for col in self.parent_table.primary_key.columns]
 
         if not parent_pk_columns:
             return []
@@ -157,9 +155,7 @@ class TableBuilder:
         # Create a unique index name based on table name
         index_name = f'ix_{table.name}_pk_transaction_id'
 
-        indexes.append(
-            sa.Index(index_name, *index_columns)
-        )
+        indexes.append(sa.Index(index_name, *index_columns))
 
         # For validity strategy, also create index for end_transaction_id queries
         if self.option('strategy') == 'validity':
@@ -169,9 +165,7 @@ class TableBuilder:
             validity_index_columns.append(table.c[end_tx_column_name])
 
             validity_index_name = f'ix_{table.name}_pk_validity'
-            indexes.append(
-                sa.Index(validity_index_name, *validity_index_columns)
-            )
+            indexes.append(sa.Index(validity_index_name, *validity_index_columns))
 
         return indexes
 
