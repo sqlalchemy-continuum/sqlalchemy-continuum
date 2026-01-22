@@ -142,14 +142,19 @@ class TableBuilder:
         indexes = []
         tx_column_name = self.option('transaction_column_name')
 
-        # Get non-transaction primary key columns from parent table
-        parent_pk_columns = [col.name for col in self.parent_table.primary_key.columns]
+        # Get primary key columns from the version table itself, excluding
+        # the transaction_id column. We use the version table's columns
+        # directly because column aliases may cause the column key to differ
+        # from the parent table's column name (e.g., id vs _id).
+        entity_pk_columns = [
+            col for col in table.primary_key.columns if col.name != tx_column_name
+        ]
 
-        if not parent_pk_columns:
+        if not entity_pk_columns:
             return []
 
         # Build index columns: (pk1, pk2, ..., transaction_id DESC)
-        index_columns = [table.c[pk_name] for pk_name in parent_pk_columns]
+        index_columns = list(entity_pk_columns)
         index_columns.append(table.c[tx_column_name].desc())
 
         # Create a unique index name based on table name
@@ -160,7 +165,7 @@ class TableBuilder:
         # For validity strategy, also create index for end_transaction_id queries
         if self.option('strategy') == 'validity':
             end_tx_column_name = self.option('end_transaction_column_name')
-            validity_index_columns = [table.c[pk_name] for pk_name in parent_pk_columns]
+            validity_index_columns = list(entity_pk_columns)
             validity_index_columns.append(table.c[tx_column_name])
             validity_index_columns.append(table.c[end_tx_column_name])
 
