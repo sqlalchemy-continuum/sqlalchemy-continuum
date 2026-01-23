@@ -113,6 +113,12 @@ Here is a full list of configuration options:
 * strategy (default: 'validity')
     The versioning strategy to use. Either 'validity' or 'subquery'
 
+* create_composite_index (default: True)
+    Whether to automatically create composite indexes on version tables for efficient version queries.
+    The composite index is created on ``(primary_key_columns, transaction_id DESC)`` which dramatically
+    speeds up common query patterns like finding a specific version of an entity. For validity strategy,
+    an additional index on ``(primary_key_columns, transaction_id, end_transaction_id)`` is also created.
+
 
 Example
 ::

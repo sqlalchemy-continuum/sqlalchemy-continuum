@@ -88,6 +88,7 @@ class VersioningManager:
             'operation_type_column_name': 'operation_type',
             'strategy': 'validity',
             'use_module_name': False,
+            'create_composite_index': True,
         }
         if plugins is None:
             self.plugins = []

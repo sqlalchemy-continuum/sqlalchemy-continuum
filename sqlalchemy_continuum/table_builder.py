@@ -123,16 +123,75 @@ class TableBuilder:
     def columns(self):
         return list(ColumnReflector(self.manager, self.parent_table, self.model))
 
+    def _build_composite_indexes(self, table):
+        """
+        Build composite indexes for efficient version queries.
+
+        Creates indexes on (primary_key_columns, transaction_id DESC) which
+        significantly speeds up common query patterns like:
+        - Finding a specific version of an entity
+        - Iterating through version history
+        - Point-in-time queries
+
+        The index is only created if create_composite_index option is True
+        (default: True).
+        """
+        if not self.option('create_composite_index'):
+            return []
+
+        indexes = []
+        tx_column_name = self.option('transaction_column_name')
+
+        # Get primary key columns from the version table itself, excluding
+        # the transaction_id column. We use the version table's columns
+        # directly because column aliases may cause the column key to differ
+        # from the parent table's column name (e.g., id vs _id).
+        entity_pk_columns = [
+            col for col in table.primary_key.columns if col.name != tx_column_name
+        ]
+
+        if not entity_pk_columns:
+            return []
+
+        # Build index columns: (pk1, pk2, ..., transaction_id DESC)
+        index_columns = list(entity_pk_columns)
+        index_columns.append(table.c[tx_column_name].desc())
+
+        # Create a unique index name based on table name
+        index_name = f'ix_{table.name}_pk_transaction_id'
+
+        indexes.append(sa.Index(index_name, *index_columns))
+
+        # For validity strategy, also create index for end_transaction_id queries
+        if self.option('strategy') == 'validity':
+            end_tx_column_name = self.option('end_transaction_column_name')
+            validity_index_columns = list(entity_pk_columns)
+            validity_index_columns.append(table.c[tx_column_name])
+            validity_index_columns.append(table.c[end_tx_column_name])
+
+            validity_index_name = f'ix_{table.name}_pk_validity'
+            indexes.append(sa.Index(validity_index_name, *validity_index_columns))
+
+        return indexes
+
     def __call__(self, extends=None):
         """
         Builds version table.
         """
         columns = self.columns if extends is None else []
         self.manager.plugins.after_build_version_table_columns(self, columns)
-        return sa.schema.Table(
+        table = sa.schema.Table(
             extends.name if extends is not None else self.table_name,
             self.parent_table.metadata,
             *columns,
             schema=self.parent_table.schema,
             extend_existing=extends is not None,
         )
+
+        # Add composite indexes for efficient version queries
+        if extends is None:
+            for index in self._build_composite_indexes(table):
+                # Indexes are automatically associated with the table when created
+                pass
+
+        return table
