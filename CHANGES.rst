@@ -7,6 +7,13 @@ Unreleased changes
 ^^^^^^^^^^^^^^^^^^
 - None currently
 
+1.6.0 (2026-01-22)
+^^^^^^^^^^^^^^^^^^
+- Add ``version_at()`` class method on version objects for efficient retrieval of the version active at a specific transaction (#376)
+- Add ``all_versions()`` class method with ``link`` option to batch fetch all versions for an entity in a single query, avoiding N+1 queries by pre-populating previous/next navigation caches (#376)
+- Add automatic composite indexes on version tables for optimized version lookups: ``(pk_columns, transaction_id DESC)`` index and ``(pk_columns, transaction_id, end_transaction_id)`` for validity strategy temporal queries (#376)
+- Add ``create_composite_index`` configuration option to control composite index creation (#376)
+
 1.5.2 (2025-10-10)
 ^^^^^^^^^^^^^^^^^^
 - Add Python 3.14 support
