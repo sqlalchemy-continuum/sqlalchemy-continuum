@@ -3,6 +3,7 @@ from functools import wraps
 from inspect import getmro
 
 import sqlalchemy as sa
+from sqlalchemy.orm import Composite
 from sqlalchemy.orm.descriptor_props import ConcreteInheritedProperty
 from ._compat import get_declarative_base
 
@@ -194,6 +195,9 @@ class Builder:
             for prop in sa.inspect(cls).iterate_properties:
                 if isinstance(prop, ConcreteInheritedProperty):
                     # ConcreteInheritedProperty doesn't have a dispatch, so we can't set active_history
+                    continue
+                if isinstance(prop, Composite):
+                    # Composite doesn't have a dispatch, so we can't set active_history
                     continue
 
                 impl = getattr(cls, prop.key).impl
