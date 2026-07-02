@@ -9,17 +9,15 @@ need to be queried afterwards for problems such as:
 
 The plugin works in two ways. On class instrumentation phase this plugin
 creates a special transaction model called `TransactionChanges`. This model is
-associated with table called `transaction_changes`, which has only only two
+associated with table called `transaction_changes`, which has only two
 fields: transaction_id and entity_name. If for example transaction consisted
 of saving 5 new User entities and 1 Article entity, two new rows would be
 inserted into transaction_changes table.
 
-================    =================
-transaction_id          entity_name
-----------------    -----------------
-233678                  User
-233678                  Article
-================    =================
+| transaction_id | entity_name |
+|----------------|-------------|
+| 233678         | User        |
+| 233678         | Article     |
 """
 
 import sqlalchemy as sa

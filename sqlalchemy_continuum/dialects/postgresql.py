@@ -418,18 +418,14 @@ def sync_trigger(session, table_name, **kwargs):
     """
     Synchronizes versioning trigger for given table with given session.
 
-    ::
-
-
-        sync_trigger(session, 'my_table')
-        session.commit()
-
+    ```python
+    sync_trigger(session, 'my_table')
+    session.commit()
+    ```
 
     :param session: SQLAlchemy session object
     :param table_name: Name of the table to synchronize versioning trigger for
-    :params **kwargs: kwargs to pass to create_trigger
-
-    .. versionadded: 1.1.0
+    :param kwargs: kwargs to pass to create_trigger
     """
     meta = sa.MetaData()
     version_table = sa.Table(table_name, meta, autoload_with=session.connection())

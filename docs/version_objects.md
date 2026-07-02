@@ -10,13 +10,13 @@ convenient constants for these values as shown below:
 ```python
 from sqlalchemy_continuum import Operation
 
-article = Article(name=u'Some article')
+article = Article(name='Some article')
 session.add(article)
 session.commit()
 
 article.versions[0].operation_type == Operation.INSERT
 
-article.name = u'Some updated article'
+article.name = 'Some updated article'
 session.commit()
 article.versions[1].operation_type == Operation.UPDATE
 
@@ -49,7 +49,7 @@ Continuum provides easy way for getting the changeset of given version object. E
 property which holds a dict of changed fields in that version.
 
 ```python
-article = Article(name=u'New article', content=u'Some content')
+article = Article(name='New article', content='Some content')
 session.add(article)
 session.commit()
 
@@ -57,16 +57,16 @@ version = article.versions[0]
 version.changeset
 # {
 #   'id': [None, 1],
-#   'name': [None, u'New article'],
-#   'content': [None, u'Some content']
+#   'name': [None, 'New article'],
+#   'content': [None, 'Some content']
 # }
-article.name = u'Updated article'
+article.name = 'Updated article'
 session.commit()
 
 version = article.versions[1]
 version.changeset
 # {
-#   'name': [u'New article', u'Updated article'],
+#   'name': ['New article', 'Updated article'],
 # }
 
 session.delete(article)
@@ -74,8 +74,8 @@ version = article.versions[2]
 version.changeset
 # {
 #   'id': [1, None]
-#   'name': [u'Updated article', None],
-#   'content': [u'Some content', None]
+#   'name': ['Updated article', None],
+#   'content': ['Some content', None]
 # }
 ```
 
@@ -86,9 +86,9 @@ you can easily check the changeset of given object in current transaction.
 from sqlalchemy_continuum import changeset
 
 
-article = Article(name=u'Some article')
+article = Article(name='Some article')
 changeset(article)
-# {'name': [None, u'Some article']}
+# {'name': ['Some article', None]}
 ```
 
 ## Version relationships
@@ -102,20 +102,20 @@ Continuum saves new ArticleVersion and CategoryVersion records in the background
 Lastly we check the category relations of different article versions.
 
 ```python
-category = Category(name=u'Some category')
+category = Category(name='Some category')
 article = Article(
-    name=u'Some article',
+    name='Some article',
     category=category
 )
 session.add(article)
 session.commit()
 
-article.category = Category(name=u'Some other category')
+article.category = Category(name='Some other category')
 session.commit()
 
 
-article.versions[0].category.name  # u'Some category'
-article.versions[1].category.name  # u'Some other category'
+article.versions[0].category.name  # 'Some category'
+article.versions[1].category.name  # 'Some other category'
 ```
 
 The logic how SQLAlchemy-Continuum builds these relationships is within the RelationshipBuilder class.
@@ -145,19 +145,19 @@ class Article(Base):
 Here Article versions will still reflect the relationships of Article model but they will simply return Category objects instead of CategoryVersion objects:
 
 ```python
-category = Category(name=u'Some category')
+category = Category(name='Some category')
 article = Article(
-    name=u'Some article',
+    name='Some article',
     category=category
 )
 session.add(article)
 session.commit()
 
-article.category = Category(name=u'Some other category')
+article.category = Category(name='Some other category')
 session.commit()
 
 version = article.versions[0]
-version.category.name                   # u'Some other category'
+version.category.name                   # 'Some other category'
 isinstance(version.category, Category)  # True
 ```
 
@@ -191,8 +191,8 @@ class Tag(Base):
     )
 
 article = Article()
-article.name = u'Some article'
-article.content = u'Some content'
+article.name = 'Some article'
+article.content = 'Some content'
 session.add(article)
 session.commit()
 

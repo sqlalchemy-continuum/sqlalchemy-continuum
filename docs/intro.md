@@ -78,15 +78,15 @@ per transaction for transaction tracking. (If the TransactionChangesPlugin is en
 entities are also created per transaction, where N is the number of affected classes per transaction.)
 
 ```python
-article = Article(name=u'Some article')
+article = Article(name='Some article')
 session.add(article)
 session.commit()
 
-article.versions[0].name == u'Some article'
+article.versions[0].name == 'Some article'
 
-article.name = u'Some updated article'
+article.name = 'Some updated article'
 
 session.commit()
 
-article.versions[1].name == u'Some updated article'
+article.versions[1].name == 'Some updated article'
 ```

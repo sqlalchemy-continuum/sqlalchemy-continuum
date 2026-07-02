@@ -13,6 +13,7 @@ on:
     paths:
       - "docs/**"
       - "zensical.toml"
+      - "sqlalchemy_continuum/**"
       - ".github/workflows/docs.yml"
 
 permissions:
@@ -35,10 +36,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v8
-
-      - name: Set up Python
-        run: uv python install
+        uses: astral-sh/setup-uv@v8.2.0
 
       - name: Create virtual environment
         run: uv venv
@@ -47,7 +45,9 @@ jobs:
         run: uv pip install -e . --group docs
 
       - name: Build documentation
-        run: uv run zensical build --clean
+        # --no-sync keeps uv run from syncing the full dev group over
+        # the docs-only environment.
+        run: uv run --no-sync zensical build --clean --strict
 
       - name: Setup Pages
         uses: actions/configure-pages@v6

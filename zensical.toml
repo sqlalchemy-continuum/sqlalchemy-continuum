@@ -44,8 +44,6 @@ features = [
 [project.markdown_extensions.admonition]
 [project.markdown_extensions.attr_list]
 [project.markdown_extensions.def_list]
-[project.markdown_extensions.footnotes]
-[project.markdown_extensions.md_in_html]
 [project.markdown_extensions.tables]
 
 [project.markdown_extensions.toc]
@@ -59,11 +57,7 @@ line_spans = "__span"
 pygments_lang_class = true
 
 [project.markdown_extensions.pymdownx.inlinehilite]
-[project.markdown_extensions.pymdownx.snippets]
 [project.markdown_extensions.pymdownx.superfences]
-
-[project.markdown_extensions.pymdownx.tabbed]
-alternate_style = true
 
 [project.plugins.mkdocstrings.handlers.python]
 inventories = ["https://docs.python.org/3/objects.inv"]

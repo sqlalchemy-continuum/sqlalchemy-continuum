@@ -87,6 +87,7 @@ select = [
     "B",   # flake8-bugbear
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
+    "T10", # flake8-debugger (breakpoint()/pdb left in code)
 ]
 ignore = [
     "E501",  # line too long, handled by ruff format
@@ -117,10 +118,13 @@ docs = [
     "zensical>=0.0.46",
     "mkdocstrings-python>=1.16",
 ]
+lint = [
+    "ruff>=0.15",
+]
 dev = [
     { include-group = "test" },
     { include-group = "docs" },
-    "ruff>=0.15",
+    { include-group = "lint" },
     "tox>=4.27",
     "pre-commit>=4.3",
 ]

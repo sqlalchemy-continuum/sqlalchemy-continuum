@@ -64,7 +64,7 @@ The user guide lives in `docs/` and is built with
 
 ```bash
 uv run zensical serve   # live-reload preview at http://localhost:8000
-uv run zensical build   # static build into site/
+uv run zensical build --clean --strict   # static build into site/
 ```
 
 ## Pull requests
@@ -73,7 +73,8 @@ uv run zensical build   # static build into site/
 - Code fixes and features should link an issue that contains a complete
   example, and must include tests. A test that fails without the fix is
   strongly preferred.
-- Add an entry to `CHANGES.rst` under an "Unreleased" heading.
+- Add an entry to `CHANGES.rst` under an "Unreleased" heading, and mirror it
+  in `docs/changelog.md`.
 
 ## Release process (maintainers)
 

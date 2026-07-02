@@ -1,21 +1,13 @@
 # SQLAlchemy-Continuum
 
-SQLAlchemy-Continuum is a versioning extension for SQLAlchemy.
-
-## Features
-
-- Creates versions for inserts, deletes and updates
-- Does not store updates which don't change anything
-- Supports alembic migrations
-- Can revert objects data as well as all object relations at given transaction even if the object was deleted
-- Transactions can be queried afterwards using SQLAlchemy query syntax
-- Query for changed records at given transaction
-- Temporal relationship reflection. Version object's relationship show the parent objects relationships as they where in that point in time.
-- Supports native versioning for PostgreSQL database (trigger based versioning)
+SQLAlchemy-Continuum is a versioning and auditing extension for SQLAlchemy:
+it creates version records for inserts, updates and deletes of your models,
+tied to transaction records that can be queried afterwards.
 
 ## Getting started
 
-New to SQLAlchemy-Continuum? Start with the [Introduction](intro.md), which covers installation and basic usage.
+New to SQLAlchemy-Continuum? Start with the [Introduction](intro.md), which
+covers the [feature set](intro.md#features), installation and basic usage.
 
 ## Documentation contents
 

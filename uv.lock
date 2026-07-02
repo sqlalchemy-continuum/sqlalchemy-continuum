@@ -740,6 +740,9 @@ docs = [
     { name = "mkdocstrings-python" },
     { name = "zensical" },
 ]
+lint = [
+    { name = "ruff" },
+]
 test = [
     { name = "flask" },
     { name = "flask-login" },
@@ -778,6 +781,7 @@ docs = [
     { name = "mkdocstrings-python", specifier = ">=1.16" },
     { name = "zensical", specifier = ">=0.0.46" },
 ]
+lint = [{ name = "ruff", specifier = ">=0.15" }]
 test = [
     { name = "flask", specifier = ">=2.0" },
     { name = "flask-login", specifier = ">=0.6" },

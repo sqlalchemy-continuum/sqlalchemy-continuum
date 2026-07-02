@@ -47,8 +47,8 @@ Consider the following code snippet where we create a new article.
 
 ```python
 article = Article()
-article.name = u'Some article'
-article.content = u'Some content'
+article.name = 'Some article'
+article.content = 'Some content'
 session.add(article)
 session.commit()
 ```

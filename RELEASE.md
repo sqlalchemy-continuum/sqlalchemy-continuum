@@ -13,10 +13,11 @@ This document outlines the process for creating a new release of SQLAlchemy-Cont
 
 ### 1. Prepare the Release
 
-1. **Update CHANGES.rst**
+1. **Update CHANGES.rst and docs/changelog.md**
    - Move items from "Unreleased changes" section to a new version section
    - Follow the existing format: `X.Y.Z (YYYY-MM-DD)`
    - Add a new "Unreleased changes" section with `- TODO`
+   - Mirror the same change in `docs/changelog.md` (the published docs copy)
 
 2. **Update version in pyproject.toml**
    ```bash
@@ -32,7 +33,7 @@ This document outlines the process for creating a new release of SQLAlchemy-Cont
 
 4. **Commit the changes**
    ```bash
-   git add CHANGES.rst pyproject.toml sqlalchemy_continuum/__init__.py
+   git add CHANGES.rst docs/changelog.md pyproject.toml sqlalchemy_continuum/__init__.py
    git commit -m "Bump version to X.Y.Z"
    git push origin main
    ```
