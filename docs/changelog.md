@@ -1,51 +1,49 @@
-Changelog
----------
+# Changelog
 
 Here you can see the full list of changes between each SQLAlchemy-Continuum release.
 
-Unreleased changes
-^^^^^^^^^^^^^^^^^^
+## Unreleased changes
+
 - Drop Python 3.9 support (EOL October 2025); the minimum supported Python is now 3.10
-- Modernize codebase to Python 3.10+ syntax (PEP 604 unions, built-in generics, plain dicts instead of ``OrderedDict``)
-- Migrate documentation from Sphinx/reStructuredText to `Zensical <https://zensical.org>`_ (Markdown + mkdocstrings)
-- Fix broken user guide examples (``session.commit(article)``, ``sync_trigger(conn, ...)``, ``Transaction.query``, ``create_session`` removed in SQLAlchemy 2.0) and add ``tests/test_user_guide_examples.py`` to keep documented examples working
-- Remove a leftover ``breakpoint()`` call in ``TransactionChangesPlugin``
-- Fix latent ``AttributeError`` in ``VersioningManager.append_association_operation``
+- Modernize codebase to Python 3.10+ syntax (PEP 604 unions, built-in generics, plain dicts instead of `OrderedDict`)
+- Migrate documentation from Sphinx/reStructuredText to [Zensical](https://zensical.org) (Markdown + mkdocstrings)
+- Fix broken user guide examples (`session.commit(article)`, `sync_trigger(conn, ...)`, `Transaction.query`, `create_session` removed in SQLAlchemy 2.0) and add `tests/test_user_guide_examples.py` to keep documented examples working
+- Remove a leftover `breakpoint()` call in `TransactionChangesPlugin`
+- Fix latent `AttributeError` in `VersioningManager.append_association_operation`
 - Expand ruff lint rules (E/W/F/I/B/C4/UP) and drop the separate pyupgrade pre-commit hook
-- Move test/dev/docs dependencies to PEP 735 ``[dependency-groups]``; package extras are now user-facing only (``flask``, ``flask-login``, ``flask-sqlalchemy``)
+- Move test/dev/docs dependencies to PEP 735 `[dependency-groups]`; package extras are now user-facing only (`flask`, `flask-login`, `flask-sqlalchemy`)
 - Publish to PyPI via GitHub Actions trusted publishing on GitHub releases
 - Add Dependabot (GitHub Actions, uv lockfile, pre-commit hooks), issue/PR templates, CONTRIBUTING.md and SECURITY.md
 
-1.6.0 (2026-01-22)
-^^^^^^^^^^^^^^^^^^
-- Add ``version_at()`` class method on version objects for efficient retrieval of the version active at a specific transaction (#376)
-- Add ``all_versions()`` class method with ``link`` option to batch fetch all versions for an entity in a single query, avoiding N+1 queries by pre-populating previous/next navigation caches (#376)
-- Add automatic composite indexes on version tables for optimized version lookups: ``(pk_columns, transaction_id DESC)`` index and ``(pk_columns, transaction_id, end_transaction_id)`` for validity strategy temporal queries (#376)
-- Add ``create_composite_index`` configuration option to control composite index creation (#376)
+## 1.6.0 (2026-01-22)
 
-1.5.2 (2025-10-10)
-^^^^^^^^^^^^^^^^^^
+- Add `version_at()` class method on version objects for efficient retrieval of the version active at a specific transaction (#376)
+- Add `all_versions()` class method with `link` option to batch fetch all versions for an entity in a single query, avoiding N+1 queries by pre-populating previous/next navigation caches (#376)
+- Add automatic composite indexes on version tables for optimized version lookups: `(pk_columns, transaction_id DESC)` index and `(pk_columns, transaction_id, end_transaction_id)` for validity strategy temporal queries (#376)
+- Add `create_composite_index` configuration option to control composite index creation (#376)
+
+## 1.5.2 (2025-10-10)
+
 - Add Python 3.14 support
 
-1.5.1 (2025-10-01)
-^^^^^^^^^^^^^^^^^^
+## 1.5.1 (2025-10-01)
+
 - Fix utc_now() to return a naive datetime (#373, thanks to dawhalen)
 - Remove SQLAlchemy-Utils dependency by porting required functions to internal _compat module (#352)
   Note: if you use SQLAlchemy-Utils directly, you may need to add it as a dependency.
-  - Port core functions: ImproperlyConfigured, get_declarative_base, naturally_equivalent
-  - Port column utilities: get_columns, get_primary_keys, identity, get_column_key
-  - Port advanced functionality: has_changes, JSONType, generic_relationship with full SQLAlchemy 2.x compatibility
-  - Maintain full backward compatibility while eliminating external dependency
-  - Reduce installation footprint and potential version conflicts
+    - Port core functions: ImproperlyConfigured, get_declarative_base, naturally_equivalent
+    - Port column utilities: get_columns, get_primary_keys, identity, get_column_key
+    - Port advanced functionality: has_changes, JSONType, generic_relationship with full SQLAlchemy 2.x compatibility
+    - Maintain full backward compatibility while eliminating external dependency
+    - Reduce installation footprint and potential version conflicts
 
-1.5.0 (2025-08-30)
-^^^^^^^^^^^^^^^^^^
+## 1.5.0 (2025-08-30)
 
-- Migrate to `ruff <https://docs.astral.sh/ruff/>`_ for code linting and formatting, replacing flake8 with a faster Rust-based tool. (#364)
+- Migrate to [ruff](https://docs.astral.sh/ruff/) for code linting and formatting, replacing flake8 with a faster Rust-based tool. (#364)
 - Add Python 3.13 support. (#364)
 - Drop Python 3.8 support. (#364)
 - Add comprehensive pre-commit hooks configuration with ruff, pyupgrade, and code quality checks
-- Add `pyupgrade <https://github.com/asottile/pyupgrade>`_ integration to automatically modernize Python 3.9+ syntax
+- Add [pyupgrade](https://github.com/asottile/pyupgrade) integration to automatically modernize Python 3.9+ syntax
 - Enhance tox configuration with matrix testing for multiple Python (3.9-3.13) and SQLAlchemy versions (1.4, 2.x)
 - Add dedicated ruff testing environment in tox for consistent code quality checks
 - Modernize codebase with Python 3.9+ idioms and formatting improvements
@@ -56,22 +54,17 @@ Unreleased changes
 - Eliminate cartesian product warnings in many-to-many relationship queries with non-versioned classes
 - Improve code quality by modernizing mixed string formatting patterns to f-strings
 
-1.4.2 (2024-03-26)
-^^^^^^^^^^^^^^^^^^
+## 1.4.2 (2024-03-26)
 
 - Remove SQLAlchemy pin and require latest SQLAlchemy-Utils
 
-
-1.4.1 (2024-03-14)
-^^^^^^^^^^^^^^^^^^
+## 1.4.1 (2024-03-14)
 
 - Pin SQLAlchemy due to SQLAlchemy-Utils breakage
 - Fix docs (#335, thanks to gnu-lorien)
 - Remove use of deprecated `_app_ctx_stack` and `_request_ctx_stack` (#307, thanks to rubencho)
 
-
-1.4.0 (2023-07-12)
-^^^^^^^^^^^^^^^^^^
+## 1.4.0 (2023-07-12)
 
 - Add support for SQLAlchemy 2.0
 - Remove compatibility code for SQLAlchemy < 1.4 and Python 2
@@ -82,22 +75,16 @@ Unreleased changes
 - create_trigger and sync_trigger now take a session, not a connection
 - Removed Operation.iteritems
 
-
-1.3.15 (2023-06-07)
-^^^^^^^^^^^^^^^^^^^
+## 1.3.15 (2023-06-07)
 
 - Fix docs (#329, thanks to kelvinscuesta)
 - Declare six as a dependency (#327, thanks to zupo)
 
-
-1.3.14 (2023-01-04)
-^^^^^^^^^^^^^^^^^^^
+## 1.3.14 (2023-01-04)
 
 - Undo unneeded change to Flask-Login that breaks alternative IDs (#325, thanks to anthraxx)
 
-
-1.3.13 (2022-09-07)
-^^^^^^^^^^^^^^^^^^^
+## 1.3.13 (2022-09-07)
 
 - Fixes for Flask 2.2 and Flask-Login 0.6.2 (#288, thanks to AbdealiJK)
 - Allow changed_entities to work without TransactionChanges plugin (#268, thanks to TomGoBravo)
@@ -106,155 +93,109 @@ Unreleased changes
 - Fix association tables on Oracle (#291, thanks to AbdealiJK)
 - Fix some deprecation warnings in SA 1.4 (#269, #277, #279, #300, #302, thanks to TomGoBravo, edhaz, and indiVar0508)
 
-1.3.12 (2022-01-18)
-^^^^^^^^^^^^^^^^^^^
+## 1.3.12 (2022-01-18)
 
 - Support SA 1.4
 
-1.3.11 (2020-05-24)
-^^^^^^^^^^^^^^^^^^^
+## 1.3.11 (2020-05-24)
 
 - Made ModelBuilder create column aliases in version models (#246, courtesy of killthekitten)
 
-
-1.3.10 (2020-05-10)
-^^^^^^^^^^^^^^^^^^^
+## 1.3.10 (2020-05-10)
 
 - Added explicit "pseudo-backref" relationships for version/parent (#240, courtesy of lgedgar)
 - Fixed m2m Bug when an unrelated change is made to a model (#242, courtesy of Andrew-Dickinson)
 
-
-1.3.9 (2019-03-19)
-^^^^^^^^^^^^^^^^^^
+## 1.3.9 (2019-03-19)
 
 - Added SA 1.3 support
 - Reverted trigger creation from 1.3.7
 
-
-1.3.8 (2019-02-27)
-^^^^^^^^^^^^^^^^^^
+## 1.3.8 (2019-02-27)
 
 - Fixed revert to ignore non-columns (#197, courtesy of mauler)
 
-
-1.3.7 (2019-01-13)
-^^^^^^^^^^^^^^^^^^
+## 1.3.7 (2019-01-13)
 
 - Fix trigger creation during alembic migrations (#209, courtesy of lyndsysimon)
 
-
-1.3.6 (2018-07-30)
-^^^^^^^^^^^^^^^^^^
+## 1.3.6 (2018-07-30)
 
 - Fixed ResourceClosedErrors from connections leaking when using an external transaction (#196, courtesy of vault)
 
-
-1.3.5 (2018-06-03)
-^^^^^^^^^^^^^^^^^^
+## 1.3.5 (2018-06-03)
 
 - Track cloned connections (#167, courtesy of netcriptus)
 
-
-1.3.4 (2018-03-07)
-^^^^^^^^^^^^^^^^^^
+## 1.3.4 (2018-03-07)
 
 - Exclude many-to-many properties from versioning if they are added in exclude parameter (#169, courtesy of fuhrysteve)
 
-
-1.3.3 (2017-11-05)
-^^^^^^^^^^^^^^^^^^
+## 1.3.3 (2017-11-05)
 
 - Fixed changeset when updating object in same transaction as inserting it (#141, courtesy of oinopion)
 
-
-1.3.2 (2017-10-12)
-^^^^^^^^^^^^^^^^^^
+## 1.3.2 (2017-10-12)
 
 - Fixed multiple schema handling (#132, courtesy of vault)
 
-
-1.3.1 (2017-06-28)
-^^^^^^^^^^^^^^^^^^
+## 1.3.1 (2017-06-28)
 
 - Fixed subclass retrieval for closest_matching_table (#163, courtesy of debonzi)
 
-
-1.3.0 (2017-01-30)
-^^^^^^^^^^^^^^^^^^
+## 1.3.0 (2017-01-30)
 
 - Dropped py2.6 support
 - Fixed memory leaks with UnitOfWork instances (#131, courtesy of quantus)
 
-
-1.2.4 (2016-01-10)
-^^^^^^^^^^^^^^^^^^
+## 1.2.4 (2016-01-10)
 
 - Added explicit sequence names for Oracle (#118, courtesy of apfeiffer1)
 
-
-1.2.3 (2016-01-10)
-^^^^^^^^^^^^^^^^^^
+## 1.2.3 (2016-01-10)
 
 - Added use_module_name configuration option (#119, courtesy of kyheo)
 
-
-1.2.2 (2015-12-08)
-^^^^^^^^^^^^^^^^^^
+## 1.2.2 (2015-12-08)
 
 - Fixed some relationship changes not counted as modifications (#116, courtesy of tvuotila)
 
-
-1.2.1 (2015-09-27)
-^^^^^^^^^^^^^^^^^^
+## 1.2.1 (2015-09-27)
 
 - Fixed deep joined table inheritance handling (#105, courtesy of piotr-dobrogost)
 - Fixed naive assumption of related User model always having id column (#107, courtesy of avilaton)
 - Fixed one-to-many relationship reverting (#102, courtesy of sdorazio)
 
-
-1.2.0 (2015-07-31)
-^^^^^^^^^^^^^^^^^^
+## 1.2.0 (2015-07-31)
 
 - Removed generated changes attribute from version classes. This attribute can be accessed through `transaction.changes`
 - Removed is_modified checking from insert operations
 
-
-1.1.5 (2014-12-28)
-^^^^^^^^^^^^^^^^^^
+## 1.1.5 (2014-12-28)
 
 - Added smart primary key type inspection for user class (#86, courtesy of mattupstate)
 - Added support for self-referential version relationship reflection (#88, courtesy of dtheodor)
 
-
-1.1.4 (2014-12-06)
-^^^^^^^^^^^^^^^^^^
+## 1.1.4 (2014-12-06)
 
 - Fixed One-To-Many version relationship handling (#82, courtesy of dtheodor)
 - Fixed Many-To-Many version relationship handling (#83, courtesy of dtheodor)
 - Fixed inclusion and exclusion of aliased columns
 - Removed automatic exclusion of auto-assigned datetime columns and tsvector columns (explicit is better than implicit)
 
-
-1.1.3 (2014-10-23)
-^^^^^^^^^^^^^^^^^^
+## 1.1.3 (2014-10-23)
 
 - Made FlaskPlugin accepts overriding of current_user_id_factory and remote_addr_factory
 
-
-1.1.2 (2014-10-07)
-^^^^^^^^^^^^^^^^^^
+## 1.1.2 (2014-10-07)
 
 - Fixed identifier quoting in trigger syncing
 
-
-1.1.1 (2014-10-07)
-^^^^^^^^^^^^^^^^^^
+## 1.1.1 (2014-10-07)
 
 - Fixed native versioning trigger syncing
 
-
-1.1.0 (2014-10-02)
-^^^^^^^^^^^^^^^^^^
+## 1.1.0 (2014-10-02)
 
 - Added Python 3.4 to test suite
 - Added optional native trigger based versioning for PostgreSQL dialect
@@ -266,33 +207,25 @@ Unreleased changes
 - Fixed version model building when no versioned models were found (previously threw AttributeError)
 - Replaced plugin template methods before_create_tx_object and after_create_tx_object with transaction_args to better cope with native versioning
 
+## 1.0.3 (2014-07-16)
 
-1.0.3 (2014-07-16)
-^^^^^^^^^^^^^^^^^^
-
-- Added __repr__ for Operations class
+- Added `__repr__` for Operations class
 - Fixed an issue where assigning unmodified object's attributes in user defined before flush listener would raise TypeError in UnitOfWork
 
-
-1.0.2 (2014-07-11)
-^^^^^^^^^^^^^^^^^^
+## 1.0.2 (2014-07-11)
 
 - Allowed easier overriding of PropertyModTracker column creation
 - Rewrote join table inheritance handling schematics (now working with SA 0.9.6)
 - SQLAlchemy-Utils dependency updated to 0.26.5
 
-
-1.0.1 (2014-06-18)
-^^^^^^^^^^^^^^^^^^
+## 1.0.1 (2014-06-18)
 
 - Fixed an issue where deleting an object with deferred columns would throw ObjectDeletedError.
 - Made viewonly relationships with association tables not register the association table to versioning manager registry.
 
+## 1.0 (2014-06-16)
 
-1.0 (2014-06-16)
-^^^^^^^^^^^^^^^^
-
-- Added __repr__ for Transaction class, issue #59
+- Added `__repr__` for Transaction class, issue #59
 - Made transaction_cls of VersioningManager configurable.
 - Removed generic relationships from transaction class to versioned classes.
 - Removed generic relationships from transaction changes class to versioned classes.
@@ -301,9 +234,7 @@ Unreleased changes
 - Removed inflection package from dependencies (no longer needed)
 - SQLAlchemy-Utils dependency updated to 0.26.2
 
-
-1.0b5 (2014-05-07)
-^^^^^^^^^^^^^^^^^^
+## 1.0b5 (2014-05-07)
 
 - Added order_by mapper arg ignoring for version class reflection if other than string argument is used
 - Added support for customizing the User class which the Transaction class should have relationship to (issue #53)
@@ -311,18 +242,14 @@ Unreleased changes
 - Fixed relationship reflection from versioned classes to non versioned classes (issue #52)
 - SQLAlchemy-Utils dependency updated to 0.25.4
 
-
-1.0-b4 (2014-04-20)
-^^^^^^^^^^^^^^^^^^^
+## 1.0-b4 (2014-04-20)
 
 - Fixed many-to-many unit of work inspection when using engine bind instead of collection bind
 - Fixed various issues if primary key aliases were used in declarative models
 - Fixed an issue where association versioning would not work with custom transaction column name
 - SQLAlchemy-Utils dependency updated to 0.25.3
 
-
-1.0-b3 (2014-04-19)
-^^^^^^^^^^^^^^^^^^^
+## 1.0-b3 (2014-04-19)
 
 - Added support for concrete inheritance
 - Added order_by mapper arg reflection to version classes
@@ -331,9 +258,7 @@ Unreleased changes
 - Fixed end transaction id setting for join table inheritance classes. Now end transaction id is set explicitly to all tables in inheritance hierarchy.
 - Fixed single table inheritance handling
 
-
-1.0-b2 (2014-04-09)
-^^^^^^^^^^^^^^^^^^^
+## 1.0-b2 (2014-04-09)
 
 - Added some schema tools to help migrating between different plugins and versioning strategies
 - Added remove_versioning utility function, see issue #45
@@ -343,9 +268,7 @@ Unreleased changes
 - Fixed a bug where committing a session without objects would result in KeyError
 - SQLAlchemy dependency updated to 0.9.4
 
-
-1.0-b1 (2014-03-14)
-^^^^^^^^^^^^^^^^^^^
+## 1.0-b1 (2014-03-14)
 
 - Added new plugin architecture
 - Added ActivityPlugin
@@ -362,427 +285,295 @@ Unreleased changes
 - Deprecated extensions
 - SQLAlchemy-Utils dependency updated to 0.25.0
 
-
-0.10.3 (2014-02-27)
-^^^^^^^^^^^^^^^^^^^
+## 0.10.3 (2014-02-27)
 
 - Fixed version next / previous handling
 - SQLAlchemy dependency updated to 0.9.3
 - Fixed column onupdate to history table reflection (issue #47)
 
-
-0.10.2 (2014-02-10)
-^^^^^^^^^^^^^^^^^^^
+## 0.10.2 (2014-02-10)
 
 - Fixed MySQL support (issue #36)
 - Added SQLite and MySQL to testing matrix
 
-
-0.10.1 (2013-10-18)
-^^^^^^^^^^^^^^^^^^^
+## 0.10.1 (2013-10-18)
 
 - Added vacuum function
 
-
-0.10.0 (2013-10-09)
-^^^^^^^^^^^^^^^^^^^
+## 0.10.0 (2013-10-09)
 
 - Validity versioning strategy
 - Changeset supports custom transaction column names
 - Reify -> Revert
 - Fixed revert to support class level column exclusion
 
-
-0.9.0 (2013-09-12)
-^^^^^^^^^^^^^^^^^^
+## 0.9.0 (2013-09-12)
 
 - Ability to track property modifications
 - New configuration options: track_property_modifications and modified_flag_suffix
 
-
-0.8.7 (2013-09-04)
-^^^^^^^^^^^^^^^^^^
+## 0.8.7 (2013-09-04)
 
 - Only autoincremented columns marked as autoincrement=False for history tables. This enables alembic migrations to generate without annoying explicit autoincrement=False args.
 
-
-0.8.6 (2013-08-21)
-^^^^^^^^^^^^^^^^^^
+## 0.8.6 (2013-08-21)
 
 - Custom database schema support added
 
-
-0.8.5 (2013-08-01)
-^^^^^^^^^^^^^^^^^^
+## 0.8.5 (2013-08-01)
 
 - TSVectorType columns not versioned by default (in order to avoid massive version histories)
 
-
-0.8.4 (2013-07-31)
-^^^^^^^^^^^^^^^^^^
+## 0.8.4 (2013-07-31)
 
 - Full MySQL and SQLite support added
 
-
-0.8.3 (2013-07-29)
-^^^^^^^^^^^^^^^^^^
+## 0.8.3 (2013-07-29)
 
 - Fixed UnitOfWork changed entities handling (now checks only for versioned attributes not all object attributes)
 - Fixed UnitOfWork TransactionMeta object creation (now checks if actual modifications were made)
 
-
-0.8.2 (2013-07-26)
-^^^^^^^^^^^^^^^^^^^
+## 0.8.2 (2013-07-26)
 
 - Fixed MySQL history table primary key generation (autoincrement=False now forced for transaction_id column)
 
-
-0.8.1 (2013-07-25)
-^^^^^^^^^^^^^^^^^^^
+## 0.8.1 (2013-07-25)
 
 - Added support for SQLAlchemy-i18n
 
-
-0.8.0 (2013-07-25)
-^^^^^^^^^^^^^^^^^^^
+## 0.8.0 (2013-07-25)
 
 - Added database independent transaction meta parameter handling (formerly supported postgres only)
 
-
-0.7.13 (2013-07-24)
-^^^^^^^^^^^^^^^^^^^
+## 0.7.13 (2013-07-24)
 
 - Smarter is_modified handling for UnitOfWork (now understands excluded properties)
 
-
-0.7.12 (2013-07-23)
-^^^^^^^^^^^^^^^^^^^
+## 0.7.12 (2013-07-23)
 
 - Fixed FlaskVersioningManager schematics when working outside of request context (again)
 - Added possibility to use custom UnitOfWork class
 
-
-0.7.11 (2013-07-23)
-^^^^^^^^^^^^^^^^^^^
+## 0.7.11 (2013-07-23)
 
 - Fixed FlaskVersioningManager schematics when working outside of request context
 
-
-0.7.10 (2013-07-23)
-^^^^^^^^^^^^^^^^^^^
+## 0.7.10 (2013-07-23)
 
 - Fixed is_auto_assigned_date_column (again)
 - Moved some core utility functions to SQLAlchemy-Utils
 
-
-0.7.9 (2013-07-23)
-^^^^^^^^^^^^^^^^^^
+## 0.7.9 (2013-07-23)
 
 - Fixed is_auto_assigned_date_column
 - Inflection added to requirements
 
+## 0.7.8 (2013-07-03)
 
-0.7.8 (2013-07-03)
-^^^^^^^^^^^^^^^^^^
+- Removed Versioned base class (adding `__versioned__` attribute and calling make_versioned() is sufficient for making declarative class versioned)
 
-- Removed Versioned base class (adding __versioned__ attribute and calling make_versioned() is sufficient for making declarative class versioned)
-
-
-0.7.7 (2013-07-03)
-^^^^^^^^^^^^^^^^^^
+## 0.7.7 (2013-07-03)
 
 - DateTime columns with defaults excluded by default from history classes
 - Column inclusion added as option
 
-
-0.7.6 (2013-07-03)
-^^^^^^^^^^^^^^^^^^
+## 0.7.6 (2013-07-03)
 
 - Smarter changeset handling
 
-
-0.7.5 (2013-07-03)
-^^^^^^^^^^^^^^^^^^
+## 0.7.5 (2013-07-03)
 
 - Improved reify() speed
 
-
-0.7.4 (2013-07-03)
-^^^^^^^^^^^^^^^^^^
+## 0.7.4 (2013-07-03)
 
 - Fixed changeset when parent contains more columns than version class.
 
-
-0.7.3 (2013-06-27)
-^^^^^^^^^^^^^^^^^^
+## 0.7.3 (2013-06-27)
 
 - Transaction log and transaction changes records only created if actual net changes were made during transaction.
 
-
-0.7.2 (2013-06-27)
-^^^^^^^^^^^^^^^^^^
+## 0.7.2 (2013-06-27)
 
 - Removed last references for old revision versioning
 
-
-0.7.1 (2013-06-27)
-^^^^^^^^^^^^^^^^^^
+## 0.7.1 (2013-06-27)
 
 - Added is_versioned utility function
 - Fixed before operation listeners
 
-
-0.7.0 (2013-06-27)
-^^^^^^^^^^^^^^^^^^
+## 0.7.0 (2013-06-27)
 
 - Version tables no longer have revision column
 - Parent tables no longer need revision column
 - Version tables primary key is now (parent table pks + transaction_id)
 
-
-0.6.8 (2013-06-26)
-^^^^^^^^^^^^^^^^^^
+## 0.6.8 (2013-06-26)
 
 - Make versioned join table inherited classes support multiple consecutive flushes per transaction
 
-
-0.6.7 (2013-06-26)
-^^^^^^^^^^^^^^^^^^
+## 0.6.7 (2013-06-26)
 
 - Fixed association versioning when using executemany
 
-
-0.6.6 (2013-06-26)
-^^^^^^^^^^^^^^^^^^
+## 0.6.6 (2013-06-26)
 
 - Improved transaction log changed_entities schematics
 
-
-0.6.5 (2013-06-26)
-^^^^^^^^^^^^^^^^^^
+## 0.6.5 (2013-06-26)
 
 - Added possibility to add lazy values in transaction context meta
 
-
-0.6.4 (2013-06-25)
-^^^^^^^^^^^^^^^^^^
+## 0.6.4 (2013-06-25)
 
 - Version tables no longer generated when versioning attribute of model set to False
 
-
-0.6.3 (2013-06-25)
-^^^^^^^^^^^^^^^^^^
+## 0.6.3 (2013-06-25)
 
 - Revision column not nullable in version classes
 
-
-0.6.2 (2013-06-25)
-^^^^^^^^^^^^^^^^^^
+## 0.6.2 (2013-06-25)
 
 - Fixed relationship building for non-versioned classes
 
-
-0.6.1 (2013-06-25)
-^^^^^^^^^^^^^^^^^^
+## 0.6.1 (2013-06-25)
 
 - Parent table primary keys remain not nullable in generated version table
 
-
-0.6.0 (2013-06-25)
-^^^^^^^^^^^^^^^^^^
+## 0.6.0 (2013-06-25)
 
 - Added database agnostic versioning (no need for PostgreSQL specific triggers anymore)
 - Fixed version object relationships (never worked properly in previous versions)
 - New configuration option versioning allows setting the versioning on and off per child class.
 - Added column exclusion
 
-
-0.5.1 (2013-06-20)
-^^^^^^^^^^^^^^^^^^
+## 0.5.1 (2013-06-20)
 
 - Added improved context managing capabilities for transactions via VersioningManager.tx_context
 
+## 0.5.0 (2013-06-20)
 
-0.5.0 (2013-06-20)
-^^^^^^^^^^^^^^^^^^
-
-- Removed Versioned base class, versioned objects only need to have __versioned__ defined.
+- Removed Versioned base class, versioned objects only need to have `__versioned__` defined.
 - Session versioning now part of make_versioned function
 - Added meta parameter in TransactionLog
 - TransactionChanges model for tracking changed entities in given transaction
 - Added Flask extension
 
-
-0.4.2 (2013-06-18)
-^^^^^^^^^^^^^^^^^^
+## 0.4.2 (2013-06-18)
 
 - Alembic trigger syncing fixed for drop column and add column
 
-
-0.4.1 (2013-06-18)
-^^^^^^^^^^^^^^^^^^
+## 0.4.1 (2013-06-18)
 
 - Alembic trigger syncing fixed
 
-
-0.4.0 (2013-06-18)
-^^^^^^^^^^^^^^^^^^
+## 0.4.0 (2013-06-18)
 
 - Added support for multiple updates for same row within single transaction
 - History tables have now own revision column
 
-
-0.3.12 (2013-06-18)
-^^^^^^^^^^^^^^^^^^^
+## 0.3.12 (2013-06-18)
 
 - Not null constraints removed from all reflected columns
 - Fixed reify when parent has not null constraints
 - Added support for reifying deletion
 
-
-0.3.11 (2013-06-18)
-^^^^^^^^^^^^^^^^^^^
+## 0.3.11 (2013-06-18)
 
 - Single table inheritance support added
 
-
-0.3.10 (2013-06-18)
-^^^^^^^^^^^^^^^^^^^
+## 0.3.10 (2013-06-18)
 
 - Generated operation_type column not nullable by default
 
-
-0.3.9 (2013-06-18)
-^^^^^^^^^^^^^^^^^^
+## 0.3.9 (2013-06-18)
 
 - Added drop_table trigger synchronization
 
-
-0.3.8 (2013-06-18)
-^^^^^^^^^^^^^^^^^^
+## 0.3.8 (2013-06-18)
 
 - Autoincrementation automatically removed from reflected primary keys
 
-
-0.3.7 (2013-06-18)
-^^^^^^^^^^^^^^^^^^
+## 0.3.7 (2013-06-18)
 
 - Added identifier quoting for all column names
 
-
-0.3.6 (2013-06-18)
-^^^^^^^^^^^^^^^^^^
+## 0.3.6 (2013-06-18)
 
 - Identifier quoting for create_trigger_sql
 
-
-0.3.5 (2013-06-12)
-^^^^^^^^^^^^^^^^^^
+## 0.3.5 (2013-06-12)
 
 - Added alembic operations proxy class
 
+## 0.3.4 (2013-06-12)
 
-0.3.4 (2013-06-12)
-^^^^^^^^^^^^^^^^^^
+- VersioningManager now added in `__versioned__` dict of each versioned class
 
-- VersioningManager now added in __versioned__ dict of each versioned class
-
-
-0.3.3 (2013-06-12)
-^^^^^^^^^^^^^^^^^^
+## 0.3.3 (2013-06-12)
 
 - Creating TransactionLog now checks if it already exists.
 
-
-0.3.2 (2013-06-12)
-^^^^^^^^^^^^^^^^^^
+## 0.3.2 (2013-06-12)
 
 - Added operation_type column to version tables.
 
-
-0.3.1 (2013-06-12)
-^^^^^^^^^^^^^^^^^^
+## 0.3.1 (2013-06-12)
 
 - Versioned mixin no longer holds lists of pending objects
 - Added VersioningManager for more customizable versioning syntax
 
-
-0.3.0 (2013-06-10)
-^^^^^^^^^^^^^^^^^^
+## 0.3.0 (2013-06-10)
 
 - Model changesets
 - Fixed previous and next accessors
 - Updates generate versions only if actual changes occur
 
-
-0.2.1 (2013-06-10)
-^^^^^^^^^^^^^^^^^^
+## 0.2.1 (2013-06-10)
 
 - Added sanity check in all_affected_entities
 
-
-0.2.0 (2013-06-10)
-^^^^^^^^^^^^^^^^^^
+## 0.2.0 (2013-06-10)
 
 - Added backref relations to TransactionLog
 - Added all_affected_entities property to TransactionLog
 
+## 0.1.9 (2013-06-10)
 
-0.1.9 (2013-06-10)
-^^^^^^^^^^^^^^^^^^
+- Renamed internal attribute `__pending__` to `__pending_versioned__` in order to avoid variable naming collisions.
 
-- Renamed internal attribute __pending__ to __pending_versioned__ in order to avoid variable naming collisions.
+## 0.1.8 (2013-06-10)
 
+- Better checking of model table name in scenarios where model does not have `__tablename__` defined.
 
-0.1.8 (2013-06-10)
-^^^^^^^^^^^^^^^^^^
-
-- Better checking of model table name in scenarios where model does not have __tablename__ defined.
-
-
-0.1.7 (2013-06-07)
-^^^^^^^^^^^^^^^^^^
+## 0.1.7 (2013-06-07)
 
 - Added make_versioned for more robust declaration of versioned mappers
 
-
-0.1.6 (2013-06-07)
-^^^^^^^^^^^^^^^^^^
+## 0.1.6 (2013-06-07)
 
 - Added PostgreSQLAdapter class
 
-
-0.1.5 (2013-06-07)
-^^^^^^^^^^^^^^^^^^
+## 0.1.5 (2013-06-07)
 
 - Made trigger procedures table specific to allow more fine-grained control.
 
-
-0.1.4 (2013-06-06)
-^^^^^^^^^^^^^^^^^^
+## 0.1.4 (2013-06-06)
 
 - Added column order inspection.
 
-
-0.1.3 (2013-06-06)
-^^^^^^^^^^^^^^^^^^
+## 0.1.3 (2013-06-06)
 
 - Removed foreign key dependency from version table and transaction table
 
-
-0.1.2 (2013-06-06)
-^^^^^^^^^^^^^^^^^^
+## 0.1.2 (2013-06-06)
 
 - Fixed packaging
 
-
-0.1.1 (2013-06-06)
-^^^^^^^^^^^^^^^^^^
+## 0.1.1 (2013-06-06)
 
 - Initial support for join table inheritance
 
-
-0.1.0 (2013-06-05)
-^^^^^^^^^^^^^^^^^^
+## 0.1.0 (2013-06-05)
 
 - Initial release

@@ -38,6 +38,7 @@ In order to make your models versioned you need two things:
 .. code-block:: python
 
 
+    import sqlalchemy as sa
     from sqlalchemy_continuum import make_versioned
 
 
@@ -80,7 +81,7 @@ For completeness, below is a working example.
 
     from sqlalchemy_continuum import make_versioned
     from sqlalchemy import Column, Integer, Unicode, UnicodeText, create_engine
-    from sqlalchemy.orm import create_session, configure_mappers, declarative_base
+    from sqlalchemy.orm import Session, configure_mappers, declarative_base
 
     make_versioned(user_cls=None)
 
@@ -95,13 +96,13 @@ For completeness, below is a working example.
     configure_mappers()
     engine = create_engine('sqlite://')
     Base.metadata.create_all(engine)
-    session = create_session(bind=engine, autocommit=False)
+    session = Session(engine)
 
-    article = Article(name=u'Some article', content=u'Some content')
+    article = Article(name='Some article', content='Some content')
     session.add(article)
     session.commit()
     article.versions[0].name
-    article.name = u'Updated name'
+    article.name = 'Updated name'
     session.commit()
     article.versions[1].name
     article.versions[0].revert()
@@ -110,16 +111,16 @@ For completeness, below is a working example.
 Resources
 ---------
 
-- `Documentation <https://sqlalchemy-continuum.readthedocs.io/>`_
-- `Issue Tracker <http://github.com/kvesteri/sqlalchemy-continuum/issues>`_
-- `Code <http://github.com/kvesteri/sqlalchemy-continuum/>`_
+- `Documentation <https://sqlalchemy-continuum.github.io/sqlalchemy-continuum/>`_
+- `Issue Tracker <https://github.com/sqlalchemy-continuum/sqlalchemy-continuum/issues>`_
+- `Code <https://github.com/sqlalchemy-continuum/sqlalchemy-continuum>`_
 
 
 .. image:: http://i.imgur.com/UFaRx.gif
 
 
-.. |Build Status| image:: https://github.com/kvesteri/sqlalchemy-continuum/workflows/Test/badge.svg
-   :target: https://github.com/kvesteri/sqlalchemy-continuum/actions?query=workflow%3ATest
+.. |Build Status| image:: https://github.com/sqlalchemy-continuum/sqlalchemy-continuum/workflows/Test/badge.svg
+   :target: https://github.com/sqlalchemy-continuum/sqlalchemy-continuum/actions?query=workflow%3ATest
 .. |Version Status| image:: https://img.shields.io/pypi/v/SQLAlchemy-Continuum.png
    :target: https://pypi.python.org/pypi/SQLAlchemy-Continuum/
 .. |Downloads| image:: https://img.shields.io/pypi/dm/SQLAlchemy-Continuum.png
