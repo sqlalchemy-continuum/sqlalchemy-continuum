@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or usage help
+    url: https://github.com/sqlalchemy-continuum/sqlalchemy-continuum/discussions
+    about: Please ask usage questions in GitHub Discussions.
+  - name: Security vulnerability
+    url: https://github.com/sqlalchemy-continuum/sqlalchemy-continuum/security/advisories/new
+    about: Please report security issues privately via GitHub security advisories.

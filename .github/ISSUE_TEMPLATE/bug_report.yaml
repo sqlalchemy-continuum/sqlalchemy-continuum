@@ -1,0 +1,59 @@
+name: Bug report
+description: Report a bug in SQLAlchemy-Continuum
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thanks for taking the time to report a bug! Please fill in the
+        version information and provide a minimal, complete, verifiable
+        example — it makes fixes dramatically faster.
+  - type: input
+    id: continuum-version
+    attributes:
+      label: SQLAlchemy-Continuum version
+      placeholder: e.g. 1.6.0
+    validations:
+      required: true
+  - type: input
+    id: sqlalchemy-version
+    attributes:
+      label: SQLAlchemy version
+      placeholder: e.g. 2.0.43
+    validations:
+      required: true
+  - type: input
+    id: database
+    attributes:
+      label: Database backend and driver
+      placeholder: e.g. PostgreSQL 16 with psycopg2 2.9.10
+    validations:
+      required: true
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      placeholder: e.g. 3.12
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: mcve
+    attributes:
+      label: Minimal, complete, verifiable example
+      description: >
+        A short, self-contained script that reproduces the problem
+        (models + make_versioned() + the failing operations).
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Full stack trace (if any)
+      render: text

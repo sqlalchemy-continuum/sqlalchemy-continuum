@@ -5,9 +5,9 @@ This document outlines the process for creating a new release of SQLAlchemy-Cont
 ## Prerequisites
 
 - Access to the GitHub repository with push permissions
-- PyPI account with API token for the project
-- `uv` package manager installed
 - `gh` CLI tool installed (optional, for GitHub releases)
+- A PyPI [trusted publisher](https://docs.pypi.org/trusted-publishers/) configured
+  for this repository (workflow `publish.yml`, environment `pypi`) — one-time setup
 
 ## Release Process
 
@@ -44,25 +44,7 @@ git tag -a X.Y.Z -m "Release version X.Y.Z"
 git push origin X.Y.Z
 ```
 
-### 3. Build and Publish to PyPI
-
-1. **Build the package**
-   ```bash
-   uv build
-   ```
-
-2. **Publish to PyPI**
-   ```bash
-   uv publish --token pypi-your-api-token-here
-   ```
-
-   Alternatively, set the token as an environment variable:
-   ```bash
-   export UV_PUBLISH_TOKEN="pypi-your-api-token-here"
-   uv publish
-   ```
-
-### 4. Create GitHub Release (Optional)
+### 3. Publish a GitHub Release
 
 ```bash
 gh release create X.Y.Z --title "X.Y.Z" --notes-from-tag
@@ -70,12 +52,24 @@ gh release create X.Y.Z --title "X.Y.Z" --notes-from-tag
 
 Or create the release manually on GitHub using the tag.
 
-## PyPI API Token Setup
+Publishing the GitHub release triggers `.github/workflows/publish.yml`, which
+builds the distributions and uploads them to PyPI via trusted publishing
+(OIDC) — no API tokens involved.
 
-1. Go to https://pypi.org/manage/account/token/
-2. Create a new API token for the project
-3. Copy the token (starts with `pypi-`)
-4. Store it securely - you'll need it for publishing
+### 4. Verify
+
+- Watch the "Publish" workflow run complete on the Actions tab.
+- Check https://pypi.org/project/SQLAlchemy-Continuum/ for the new version.
+
+## Manual publishing (fallback)
+
+If the workflow is unavailable, you can still publish manually with an API
+token:
+
+```bash
+uv build
+UV_PUBLISH_TOKEN="pypi-..." uv publish
+```
 
 ## Version Numbering
 
