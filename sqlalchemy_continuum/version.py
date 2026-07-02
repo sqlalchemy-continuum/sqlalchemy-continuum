@@ -1,5 +1,3 @@
-from typing import Dict, List, Optional
-
 import sqlalchemy as sa
 
 from .reverter import Reverter
@@ -8,8 +6,8 @@ from .utils import get_versioning_manager, is_internal_column, parent_class
 
 class VersionClassBase:
     # Cache attributes for pre-loaded previous/next versions
-    _previous_cache: Optional['VersionClassBase'] = None
-    _next_cache: Optional['VersionClassBase'] = None
+    _previous_cache: 'VersionClassBase | None' = None
+    _next_cache: 'VersionClassBase | None' = None
     _cache_populated: bool = False
 
     @property
@@ -65,22 +63,24 @@ class VersionClassBase:
 
     @classmethod
     def version_at(
-        cls, session, primary_key_values: Dict, transaction_id: int
-    ) -> Optional['VersionClassBase']:
+        cls, session, primary_key_values: dict, transaction_id: int
+    ) -> 'VersionClassBase | None':
         """
         Efficiently retrieve the version that was active at a specific transaction.
 
         This is more efficient than iterating through versions manually, especially
         when using the validity strategy which can use range conditions.
 
-        Example::
+        Example:
 
-            # Get the version of Article #5 that was active at transaction #100
-            version = ArticleVersion.version_at(
-                session,
-                {'id': 5},
-                transaction_id=100
-            )
+        ```python
+        # Get the version of Article #5 that was active at transaction #100
+        version = ArticleVersion.version_at(
+            session,
+            {'id': 5},
+            transaction_id=100
+        )
+        ```
 
         :param session: SQLAlchemy session
         :param primary_key_values: Dict mapping primary key column names to values
@@ -96,12 +96,12 @@ class VersionClassBase:
     def all_versions(
         cls,
         session,
-        primary_key_values: Dict,
-        limit: Optional[int] = None,
+        primary_key_values: dict,
+        limit: int | None = None,
         offset: int = 0,
         desc: bool = True,
         link: bool = True,
-    ) -> List['VersionClassBase']:
+    ) -> list['VersionClassBase']:
         """
         Efficiently fetch all versions for an entity in a single query.
 
@@ -110,19 +110,21 @@ class VersionClassBase:
         versions will have their `.previous` and `.next` properties
         pre-populated from the cache.
 
-        Example::
+        Example:
 
-            # Get all versions of Article #5, newest first
-            versions = ArticleVersion.all_versions(
-                session,
-                {'id': 5},
-                limit=10  # Only get the 10 most recent versions
-            )
+        ```python
+        # Get all versions of Article #5, newest first
+        versions = ArticleVersion.all_versions(
+            session,
+            {'id': 5},
+            limit=10  # Only get the 10 most recent versions
+        )
 
-            # Iterate without N+1 queries
-            for version in versions:
-                print(version.changeset)
-                print(version.previous)  # Uses cached value, no query
+        # Iterate without N+1 queries
+        for version in versions:
+            print(version.changeset)
+            print(version.previous)  # Uses cached value, no query
+        ```
 
         :param session: SQLAlchemy session
         :param primary_key_values: Dict mapping primary key column names to values

@@ -58,8 +58,6 @@ class TransactionChangesFactory(ModelFactory):
 
 
 class TransactionChangesPlugin(Plugin):
-    objects = None
-
     def after_build_tx_class(self, manager):
         self.model_class = TransactionChangesFactory()(manager)
 
@@ -68,8 +66,6 @@ class TransactionChangesPlugin(Plugin):
 
     def before_create_version_objects(self, uow, session):
         for entity in uow.operations.entities:
-            if not hasattr(entity, '__name__'):
-                breakpoint()
             params = uow.current_transaction.id, str(entity.__name__)
             changes = session.get(self.model_class, params)
             if not changes:
@@ -78,15 +74,6 @@ class TransactionChangesPlugin(Plugin):
                     entity_name=str(entity.__name__),
                 )
                 session.add(changes)
-
-    def clear(self):
-        self.objects = None
-
-    def after_rollback(self, uow, session):
-        self.clear()
-
-    def ater_commit(self, uow, session):
-        self.clear()
 
     def after_version_class_built(self, parent_cls, version_cls):
         parent_cls.__versioned__['transaction_changes'] = self.model_class

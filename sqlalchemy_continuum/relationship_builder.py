@@ -110,8 +110,7 @@ class RelationshipBuilder:
         -------
         Select all tags of article with id 3 and transaction 5
 
-        .. code-block:: sql
-
+        ```sql
         SELECT tags_version.*
         FROM tags_version
         WHERE EXISTS (
@@ -140,6 +139,7 @@ class RelationshipBuilder:
             HAVING MAX(tags_version_2.tx_id) = tags_version.tx_id
         )
         AND operation_type != 2
+        ```
         """
         return sa.and_(
             self.association_subquery(obj),
@@ -158,8 +158,7 @@ class RelationshipBuilder:
         Look up the Article of a Tag with article_id = 4 and
         transaction_id = 5
 
-        .. code-block:: sql
-
+        ```sql
         SELECT *
         FROM articles_version
         WHERE id = 4
@@ -170,7 +169,7 @@ class RelationshipBuilder:
             AND id = 4
         )
         AND operation_type != 2
-
+        ```
         """
         reflector = VersionExpressionReflector(obj, self.property)
         return sa.and_(
@@ -192,8 +191,7 @@ class RelationshipBuilder:
         Using the Article-Tags relationship, where we look for tags of
         article_version with id = 3 and transaction = 5 the sql produced is
 
-        .. code-block:: sql
-
+        ```sql
         SELECT tags_version.*
         FROM tags_version
         WHERE tags_version.article_id = 3
@@ -208,7 +206,7 @@ class RelationshipBuilder:
                 MAX(tags_version_last.transaction_id) =
                 tags_version.transaction_id
         )
-
+        ```
         """
         reflector = VersionExpressionReflector(obj, self.property)
         return sa.and_(
@@ -239,8 +237,7 @@ class RelationshipBuilder:
 
         Example query:
 
-        .. code-block:: sql
-
+        ```sql
         EXISTS (
             SELECT 1
             FROM article_tag_version
@@ -259,6 +256,7 @@ class RelationshipBuilder:
                     article_tag_version.tx_id
             )
         )
+        ```
 
         :param obj: SQLAlchemy declarative object
         """

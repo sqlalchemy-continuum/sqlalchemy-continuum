@@ -192,8 +192,8 @@ target is the given article.
 import sqlalchemy as sa
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.inspection import inspect
-from .._compat import JSONType, generic_relationship
 
+from .._compat import JSONType, generic_relationship
 from ..factory import ModelFactory
 from ..utils import version_class, version_obj
 from .base import Plugin

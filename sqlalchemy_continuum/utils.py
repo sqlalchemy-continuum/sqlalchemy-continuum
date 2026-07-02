@@ -5,12 +5,12 @@ from itertools import chain
 import sqlalchemy as sa
 from sqlalchemy.orm.attributes import get_history
 from sqlalchemy.orm.util import AliasedClass
+
 from ._compat import (
     get_primary_keys,
     identity,
     naturally_equivalent,
 )
-
 from .exc import ClassNotVersioned
 
 
@@ -27,7 +27,7 @@ def get_versioning_manager(obj_or_class):
     try:
         return cls.__versioning_manager__
     except AttributeError:
-        raise ClassNotVersioned(cls.__name__)
+        raise ClassNotVersioned(cls.__name__) from None
 
 
 def option(obj_or_class, option_name):
@@ -62,14 +62,13 @@ def parent_class(version_cls):
     """
     Return the parent class for given version model class.
 
-    ::
+    ```python
+    parent_class(ArticleVersion)  # Article class
+    ```
 
-        parent_class(ArticleVersion)  # Article class
+    :param version_cls: SQLAlchemy declarative version model class
 
-
-    :param model: SQLAlchemy declarative version model class
-
-    .. seealso:: :func:`version_class`
+    See also: `version_class`
     """
     return get_versioning_manager(version_cls).parent_class_map[version_cls]
 
@@ -79,12 +78,12 @@ def transaction_class(cls):
     Return the associated transaction class for given versioned SQLAlchemy
     declarative class or version class.
 
-    ::
+    ```python
+    from sqlalchemy_continuum import transaction_class
 
-        from sqlalchemy_continuum import transaction_class
 
-
-        transaction_class(Article)  # Transaction class
+    transaction_class(Article)  # Transaction class
+    ```
 
     :param cls: SQLAlchemy versioned declarative class or version model class
     """
@@ -105,14 +104,13 @@ def version_class(model):
     """
     Return the version class for given SQLAlchemy declarative model class.
 
-    ::
-
-        version_class(Article)  # ArticleVersion class
-
+    ```python
+    version_class(Article)  # ArticleVersion class
+    ```
 
     :param model: SQLAlchemy declarative model class
 
-    .. seealso:: :func:`parent_class`
+    See also: `parent_class`
     """
     manager = get_versioning_manager(model)
     try:
@@ -143,7 +141,7 @@ def versioned_objects(session):
 
     :param session: SQLAlchemy session object
 
-    .. seealso:: :func:`is_versioned`
+    See also: `is_versioned`
     """
     for obj in session:
         if is_versioned(obj):
@@ -154,20 +152,19 @@ def is_versioned(obj_or_class):
     """
     Return whether or not given object is versioned.
 
-    ::
+    ```python
+    is_versioned(Article)  # True
 
-        is_versioned(Article)  # True
+    article = Article()
 
-        article = Article()
-
-        is_versioned(article)  # True
-
+    is_versioned(article)  # True
+    ```
 
     :param obj_or_class:
         SQLAlchemy declarative model object or SQLAlchemy declarative model
         class.
 
-    .. seealso:: :func:`versioned_objects`
+    See also: `versioned_objects`
     """
     try:
         return hasattr(obj_or_class, '__versioned__') and get_versioning_manager(
@@ -219,15 +216,12 @@ def vacuum(session, model, yield_per=1000):
     Vacuum deletes all futile version rows which had no changes compared to
     previous version.
 
-
-    ::
-
-
-        from sqlalchemy_continuum import vacuum
+    ```python
+    from sqlalchemy_continuum import vacuum
 
 
-        vacuum(session, User)  # vacuums user version
-
+    vacuum(session, User)  # vacuums user version
+    ```
 
     :param session: SQLAlchemy session object
     :param model: SQLAlchemy declarative model class
@@ -298,21 +292,19 @@ def is_modified(obj):
     Return whether or not the versioned properties of given object have been
     modified.
 
-    ::
+    ```python
+    article = Article()
 
-        article = Article()
+    is_modified(article)  # False
 
-        is_modified(article)  # False
+    article.name = 'Something'
 
-        article.name = 'Something'
-
-        is_modified(article)  # True
-
+    is_modified(article)  # True
+    ```
 
     :param obj: SQLAlchemy declarative model object
 
-    .. seealso:: :func:`is_modified_or_deleted`
-    .. seealso:: :func:`is_session_modified`
+    See also: `is_modified_or_deleted`, `is_session_modified`
     """
     column_names = sa.inspect(obj.__class__).columns.keys()
     versioned_column_keys = [prop.key for prop in versioned_column_properties(obj)]
@@ -338,8 +330,7 @@ def is_session_modified(session):
 
     :param session: SQLAlchemy session object
 
-    .. seealso:: :func:`is_versioned`
-    .. seealso:: :func:`versioned_objects`
+    See also: `is_versioned`, `versioned_objects`
     """
     return any(is_modified_or_deleted(obj) for obj in versioned_objects(session))
 
@@ -350,17 +341,16 @@ def count_versions(obj):
     when obj has `create_models` and `create_tables` versioned settings
     disabled.
 
-    ::
+    ```python
+    article = Article(name='Some article')
 
-        article = Article(name=u'Some article')
+    count_versions(article)  # 0
 
-        count_versions(article)  # 0
+    session.add(article)
+    session.commit()
 
-        session.add(article)
-        session.commit()
-
-        count_versions(article)  # 1
-
+    count_versions(article)  # 1
+    ```
 
     :param obj: SQLAlchemy declarative model object
     """
@@ -371,9 +361,7 @@ def count_versions(obj):
     manager = get_versioning_manager(obj)
     table_name = manager.option(obj, 'table_name') % obj.__table__.name
     criteria = [f'{pk} = {getattr(obj, pk)!r}' for pk in get_primary_keys(obj)]
-    query = sa.text(
-        'SELECT COUNT(1) FROM {} WHERE {}'.format(table_name, ' AND '.join(criteria))
-    )
+    query = sa.text(f'SELECT COUNT(1) FROM {table_name} WHERE {" AND ".join(criteria)}')
     return session.execute(query).scalar()
 
 
@@ -383,15 +371,14 @@ def changeset(obj):
     this function you can easily check the changeset of given object in current
     transaction.
 
-    ::
+    ```python
+    from sqlalchemy_continuum import changeset
 
 
-        from sqlalchemy_continuum import changeset
-
-
-        article = Article(name=u'Some article')
-        changeset(article)
-        # {'name': [u'Some article', None]}
+    article = Article(name='Some article')
+    changeset(article)
+    # {'name': ['Some article', None]}
+    ```
 
     :param obj: SQLAlchemy declarative model object
     """

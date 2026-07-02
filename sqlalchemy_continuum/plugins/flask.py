@@ -17,15 +17,15 @@ current_user object.
     make_versioned(plugins=[FlaskPlugin()])
 """
 
+from .._compat import ImproperlyConfigured
+from .base import Plugin
+
 flask = None
 try:
     import flask
     from flask import has_app_context, has_request_context, request
 except ImportError:
     pass
-from .._compat import ImproperlyConfigured
-
-from .base import Plugin
 
 
 def fetch_current_user_id():

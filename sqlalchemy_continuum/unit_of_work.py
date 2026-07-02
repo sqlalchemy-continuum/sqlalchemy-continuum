@@ -1,8 +1,8 @@
 from copy import copy
 
 import sqlalchemy as sa
-from ._compat import get_primary_keys, identity
 
+from ._compat import get_primary_keys, identity
 from .operation import Operations
 from .utils import (
     end_tx_column_name,
@@ -185,14 +185,14 @@ class UnitOfWork:
 
     def version_validity_subquery(self, parent, version_obj, alias=None):
         """
-        Return the subquery needed by :func:`update_version_validity`.
+        Return the subquery needed by `update_version_validity`.
 
         This method is only used when using 'validity' versioning strategy.
 
         :param parent: SQLAlchemy declarative parent object
-        :parem version_obj: SQLAlchemy declarative version object
+        :param version_obj: SQLAlchemy declarative version object
 
-        .. seealso:: :func:`update_version_validity`
+        See also: `update_version_validity`
         """
         fetcher = self.manager.fetcher(parent)
         sa.orm.object_session(version_obj)
@@ -210,9 +210,9 @@ class UnitOfWork:
         This method is only used when using 'validity' versioning strategy.
 
         :param parent: SQLAlchemy declarative parent object
-        :parem version_obj: SQLAlchemy declarative version object
+        :param version_obj: SQLAlchemy declarative version object
 
-        .. seealso:: :func:`version_validity_subquery`
+        See also: `version_validity_subquery`
         """
         session = sa.orm.object_session(version_obj)
 

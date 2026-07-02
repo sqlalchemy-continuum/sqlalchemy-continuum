@@ -1,7 +1,7 @@
-from collections import OrderedDict
 from copy import copy
 
 import sqlalchemy as sa
+
 from ._compat import identity
 
 
@@ -18,9 +18,6 @@ class Operation:
     def __eq__(self, other):
         return self.target == other.target and self.type == other.type
 
-    def __ne__(self, other):
-        return not (self == other)
-
 
 class Operations:
     """
@@ -28,7 +25,9 @@ class Operations:
     """
 
     def __init__(self):
-        self.objects = OrderedDict()
+        # Operations must be processed in insertion order; plain dicts
+        # preserve it.
+        self.objects = {}
 
     def format_key(self, target):
         # We cannot use target._sa_instance_state.identity here since object's
@@ -49,9 +48,6 @@ class Operations:
 
     def __bool__(self):
         return bool(self.objects)
-
-    def __nonzero__(self):
-        return self.__bool__()
 
     def __repr__(self):
         return repr(self.objects)

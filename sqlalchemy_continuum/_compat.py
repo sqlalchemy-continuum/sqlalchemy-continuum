@@ -18,14 +18,13 @@ Functions ported:
 """
 
 import json
-from collections import OrderedDict
 from collections.abc import Iterable
 from inspect import isclass
 
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql.base import ischema_names
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import attributes, class_mapper, ColumnProperty
+from sqlalchemy.orm import ColumnProperty, attributes, class_mapper
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.interfaces import MapperProperty, PropComparator
 from sqlalchemy.orm.session import _state_session
@@ -64,11 +63,8 @@ def get_declarative_base(model):
     :param model: SQLAlchemy declarative model
     """
     for parent in model.__bases__:
-        try:
-            parent.metadata
+        if hasattr(parent, 'metadata'):
             return get_declarative_base(parent)
-        except AttributeError:
-            pass
     return model
 
 
@@ -147,8 +143,9 @@ def get_columns(mixed):
 
 def get_primary_keys(mixed):
     """
-    Return an OrderedDict of all primary keys for given Table object,
-    declarative class or declarative class instance.
+    Return a dict of all primary keys for given Table object,
+    declarative class or declarative class instance. The dict preserves
+    column definition order.
 
     :param mixed:
         SA Table object, SA declarative class or SA declarative class instance
@@ -162,13 +159,9 @@ def get_primary_keys(mixed):
         get_primary_keys(sa.orm.aliased(User))
         get_primary_keys(sa.orm.aliased(User.__table__))
     """
-    return OrderedDict(
-        (
-            (key, column)
-            for key, column in get_columns(mixed).items()
-            if column.primary_key
-        )
-    )
+    return {
+        key: column for key, column in get_columns(mixed).items() if column.primary_key
+    }
 
 
 def identity(obj_or_class):

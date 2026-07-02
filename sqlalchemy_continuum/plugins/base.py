@@ -49,10 +49,8 @@ class PluginCollection:
         return len(self.plugins)
 
     def __repr__(self):
-        return '<{} [{}]>'.format(
-            self.__class__.__name__,
-            ', '.join(map(repr, self.plugins)),
-        )
+        plugins = ', '.join(map(repr, self.plugins))
+        return f'<{self.__class__.__name__} [{plugins}]>'
 
     def __getitem__(self, index):
         return self.plugins[index]

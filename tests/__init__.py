@@ -226,7 +226,7 @@ def create_test_cases(base_class, setting_variants=setting_variants):
     """
     names = sorted(setting_variants)
     combinations = [
-        dict(zip(names, prod))
+        dict(zip(names, prod, strict=True))
         for prod in it.product(*(setting_variants[name] for name in names))
     ]
 

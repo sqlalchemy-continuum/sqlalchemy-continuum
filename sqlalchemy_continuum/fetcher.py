@@ -1,9 +1,9 @@
 import operator
-from typing import List, Optional, TypeVar
+from typing import TypeVar
 
 import sqlalchemy as sa
-from ._compat import get_primary_keys, identity
 
+from ._compat import get_primary_keys, identity
 from .utils import end_tx_column_name, tx_column_name
 
 T = TypeVar('T')
@@ -18,7 +18,7 @@ def parent_identity(obj_or_class):
 
 
 def eqmap(callback, iterable):
-    for a, b in zip(*map(callback, iterable)):
+    for a, b in zip(*map(callback, iterable), strict=True):
         yield a == b
 
 
@@ -81,10 +81,10 @@ class VersionObjectFetcher:
         session,
         version_cls,
         primary_key_values: dict,
-        limit: Optional[int] = None,
+        limit: int | None = None,
         offset: int = 0,
         desc: bool = True,
-    ) -> List:
+    ) -> list:
         """
         Efficiently fetch all versions for an entity in a single query.
 
@@ -121,7 +121,7 @@ class VersionObjectFetcher:
 
         return query.all()
 
-    def link_versions(self, versions: List, desc: bool = True) -> List:
+    def link_versions(self, versions: list, desc: bool = True) -> list:
         """
         Link a list of versions by setting _previous_cache and _next_cache
         attributes to avoid additional queries when accessing .previous or .next.

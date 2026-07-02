@@ -4,8 +4,8 @@ from inspect import getmro
 
 import sqlalchemy as sa
 from sqlalchemy.orm.descriptor_props import ConcreteInheritedProperty
-from ._compat import get_declarative_base
 
+from ._compat import get_declarative_base
 from .dialects.postgresql import create_versioning_trigger_listeners
 from .model_builder import ModelBuilder
 from .relationship_builder import RelationshipBuilder
