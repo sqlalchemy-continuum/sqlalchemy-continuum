@@ -42,7 +42,7 @@ flask-sqlalchemy = ["Flask-SQLAlchemy>=3.0"]
 
 [project.urls]
 Homepage = "https://github.com/sqlalchemy-continuum/sqlalchemy-continuum"
-Documentation = "https://sqlalchemy-continuum.github.io/sqlalchemy-continuum/"
+Documentation = "https://sqlalchemy-continuum.github.io/"
 Changelog = "https://github.com/sqlalchemy-continuum/sqlalchemy-continuum/blob/main/CHANGES.rst"
 
 [tool.setuptools.packages.find]

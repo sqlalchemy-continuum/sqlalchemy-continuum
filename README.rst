@@ -111,7 +111,7 @@ For completeness, below is a working example.
 Resources
 ---------
 
-- `Documentation <https://sqlalchemy-continuum.github.io/sqlalchemy-continuum/>`_
+- `Documentation <https://sqlalchemy-continuum.github.io/>`_
 - `Issue Tracker <https://github.com/sqlalchemy-continuum/sqlalchemy-continuum/issues>`_
 - `Code <https://github.com/sqlalchemy-continuum/sqlalchemy-continuum>`_
 

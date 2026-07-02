@@ -1,6 +1,6 @@
 [project]
 site_name = "SQLAlchemy-Continuum"
-site_url = "https://sqlalchemy-continuum.github.io/sqlalchemy-continuum/"
+site_url = "https://sqlalchemy-continuum.github.io/"
 site_description = "Versioning and auditing extension for SQLAlchemy"
 site_author = "SQLAlchemy-Continuum contributors"
 copyright = "&copy; Konsta Vesterinen and SQLAlchemy-Continuum contributors"

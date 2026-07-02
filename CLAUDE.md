@@ -130,7 +130,10 @@ hstore-based change detection, temp-table transaction-id plumbing),
   `schema.md`) use mkdocstrings `::: dotted.path` blocks that render
   docstrings — keep docstrings accurate, griffe warns on mismatched
   `:param:` names.
-- Deployed to GitHub Pages by `.github/workflows/docs.yml` on pushes to main.
+- Published at https://sqlalchemy-continuum.github.io/ by the workflow in
+  the `sqlalchemy-continuum/sqlalchemy-continuum.github.io` repo (nightly,
+  manual dispatch, or repository_dispatch). The main repo's
+  `.github/workflows/docs.yml` only validates that the docs build.
 
 ## Releases
 
