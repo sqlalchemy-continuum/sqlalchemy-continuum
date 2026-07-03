@@ -5,6 +5,10 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
+- TODO
+
+1.7.0 (2026-07-02)
+^^^^^^^^^^^^^^^^^^
 - Drop Python 3.9 support (EOL October 2025); the minimum supported Python is now 3.10
 - Modernize codebase to Python 3.10+ syntax (PEP 604 unions, built-in generics, plain dicts instead of ``OrderedDict``)
 - Migrate documentation from Sphinx/reStructuredText to `Zensical <https://zensical.org>`_ (Markdown + mkdocstrings)
