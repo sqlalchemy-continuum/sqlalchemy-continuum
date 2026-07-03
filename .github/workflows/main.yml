@@ -57,30 +57,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
+      # Generous health-check windows: a cold MySQL start on a busy runner
+      # regularly exceeds 15s, and a container that never turns healthy
+      # fails the whole job before tests even run — including sqlite legs
+      # that don't use it.
       mysql:
-        image: mysql
+        image: mysql:9
         ports:
           - 3306:3306
         env:
           MYSQL_DATABASE: main
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         options: >-
-          --health-cmd "mysqladmin ping"
+          --health-cmd "mysqladmin ping --silent"
+          --health-start-period 30s
           --health-interval 5s
-          --health-timeout 2s
-          --health-retries 3
+          --health-timeout 5s
+          --health-retries 12
       postgres:
-        image: postgres
+        image: postgres:17
         ports:
           - 5432:5432
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: main
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres"
           --health-interval 5s
-          --health-timeout 2s
-          --health-retries 3
+          --health-timeout 5s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v7
         with:
