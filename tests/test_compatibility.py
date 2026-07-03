@@ -11,6 +11,8 @@ class TestCompatibility1_4(TestCase):
         self.connection.execute('select 1')
 
     def test_execute_string_insert(self):
+        # Single-quoted SQL string literal: double quotes denote
+        # identifiers on PostgreSQL.
         self.connection.execute(
-            'insert into article (id, name) values (1, "Test article")'
+            "insert into article (id, name) values (1, 'Test article')"
         )
