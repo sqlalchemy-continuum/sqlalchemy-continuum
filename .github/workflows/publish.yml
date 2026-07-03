@@ -18,7 +18,7 @@ jobs:
         uses: astral-sh/setup-uv@v8.2.0
       - name: Build distributions
         run: uv build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: python-package-distributions
           path: dist/
@@ -36,7 +36,7 @@ jobs:
     permissions:
       id-token: write  # mandatory for PyPI trusted publishing
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: python-package-distributions
           path: dist/
