@@ -1,21 +1,24 @@
 """
-FlaskPlugin offers way of integrating Flask framework with
-SQLAlchemy-Continuum. Flask-Plugin adds two columns for Transaction model,
-namely `user_id` and `remote_addr`.
+FlaskPlugin offers a way of integrating the Flask framework with
+SQLAlchemy-Continuum. FlaskPlugin populates the `user_id` and `remote_addr`
+columns of the Transaction model.
 
-These columns are automatically populated when transaction object is created.
-The `remote_addr` column is populated with the value of the remote address that
-made current request. The `user_id` column is populated with the id of the
-current_user object.
+These columns are automatically populated when the transaction object is
+created. The `remote_addr` column is populated with the value of the remote
+address that made the current request. The `user_id` column is populated with
+the id of the current_user object.
 
-::
+```python
+from sqlalchemy_continuum.plugins import FlaskPlugin
+from sqlalchemy_continuum import make_versioned
 
-    from sqlalchemy_continuum.plugins import FlaskPlugin
-    from sqlalchemy_continuum import make_versioned
 
-
-    make_versioned(plugins=[FlaskPlugin()])
+make_versioned(plugins=[FlaskPlugin()])
+```
 """
+
+from .._compat import ImproperlyConfigured
+from .base import Plugin
 
 flask = None
 try:
@@ -23,9 +26,6 @@ try:
     from flask import has_app_context, has_request_context, request
 except ImportError:
     pass
-from .._compat import ImproperlyConfigured
-
-from .base import Plugin
 
 
 def fetch_current_user_id():

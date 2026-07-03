@@ -1,0 +1,203 @@
+# Version objects
+
+## Operation types
+
+When changing entities and committing results into database Continuum saves the used
+operations (INSERT, UPDATE or DELETE) into version entities. The operation types are stored
+by default to a small integer field named 'operation_type'. Class called 'Operation' holds
+convenient constants for these values as shown below:
+
+```python
+from sqlalchemy_continuum import Operation
+
+article = Article(name='Some article')
+session.add(article)
+session.commit()
+
+article.versions[0].operation_type == Operation.INSERT
+
+article.name = 'Some updated article'
+session.commit()
+article.versions[1].operation_type == Operation.UPDATE
+
+session.delete(article)
+session.commit()
+article.versions[2].operation_type == Operation.DELETE
+```
+
+## Version traversal
+
+```python
+first_version = article.versions[0]
+first_version.index
+# 0
+
+
+second_version = first_version.next
+assert second_version == article.versions[1]
+
+second_version.previous == first_version
+# True
+
+second_version.index
+# 1
+```
+
+## Changeset
+
+Continuum provides easy way for getting the changeset of given version object. Each version contains a changeset
+property which holds a dict of changed fields in that version.
+
+```python
+article = Article(name='New article', content='Some content')
+session.add(article)
+session.commit()
+
+version = article.versions[0]
+version.changeset
+# {
+#   'id': [None, 1],
+#   'name': [None, 'New article'],
+#   'content': [None, 'Some content']
+# }
+article.name = 'Updated article'
+session.commit()
+
+version = article.versions[1]
+version.changeset
+# {
+#   'name': ['New article', 'Updated article'],
+# }
+
+session.delete(article)
+version = article.versions[2]
+version.changeset
+# {
+#   'id': [1, None]
+#   'name': ['Updated article', None],
+#   'content': ['Some content', None]
+# }
+```
+
+SQLAlchemy-Continuum also provides a utility function called changeset. With this function
+you can easily check the changeset of given object in current transaction.
+
+```python
+from sqlalchemy_continuum import changeset
+
+
+article = Article(name='Some article')
+changeset(article)
+# {'name': ['Some article', None]}
+```
+
+## Version relationships
+
+Each version object reflects all parent object relationships. You can think version object relations as 'relations of parent object in given point in time'.
+
+Lets say you have two models: Article and Category. Each Article has one Category. In the following example we first add article and category objects into database.
+
+Continuum saves new ArticleVersion and CategoryVersion records in the background. After that we update the created article entity to use another category. Continuum creates new version objects accordingly.
+
+Lastly we check the category relations of different article versions.
+
+```python
+category = Category(name='Some category')
+article = Article(
+    name='Some article',
+    category=category
+)
+session.add(article)
+session.commit()
+
+article.category = Category(name='Some other category')
+session.commit()
+
+
+article.versions[0].category.name  # 'Some category'
+article.versions[1].category.name  # 'Some other category'
+```
+
+The logic how SQLAlchemy-Continuum builds these relationships is within the RelationshipBuilder class.
+
+### Relationships to non-versioned classes
+
+Let's take previous example of Articles and Categories. Now consider that only Article model is versioned:
+
+```python
+class Category(Base):
+    __tablename__ = 'category'
+
+    id = sa.Column(sa.Integer, autoincrement=True, primary_key=True)
+    name = sa.Column(sa.Unicode(255))
+
+
+class Article(Base):
+    __tablename__ = 'article'
+    __versioned__ = {}
+
+    id = sa.Column(sa.Integer, autoincrement=True, primary_key=True)
+    name = sa.Column(sa.Unicode(255), nullable=False)
+    category_id = sa.Column(sa.Integer, sa.ForeignKey(Category.id))
+    category = sa.orm.relationship(Category, backref='articles')
+```
+
+Here Article versions will still reflect the relationships of Article model but they will simply return Category objects instead of CategoryVersion objects:
+
+```python
+category = Category(name='Some category')
+article = Article(
+    name='Some article',
+    category=category
+)
+session.add(article)
+session.commit()
+
+article.category = Category(name='Some other category')
+session.commit()
+
+version = article.versions[0]
+version.category.name                   # 'Some other category'
+isinstance(version.category, Category)  # True
+```
+
+### Dynamic relationships
+
+If the parent class has a dynamic relationship it will be reflected as a property which returns a query in the associated version class.
+
+```python
+class Article(Base):
+    __tablename__ = 'article'
+    __versioned__ = {}
+
+    id = sa.Column(sa.Integer, autoincrement=True, primary_key=True)
+    name = sa.Column(sa.Unicode(255), nullable=False)
+    content = sa.Column(sa.UnicodeText)
+
+
+class Tag(Base):
+    __tablename__ = 'tag'
+    __versioned__ = {}
+
+    id = sa.Column(sa.Integer, autoincrement=True, primary_key=True)
+    name = sa.Column(sa.Unicode(255))
+    article_id = sa.Column(sa.Integer, sa.ForeignKey(Article.id))
+    article = sa.orm.relationship(
+        Article,
+        backref=sa.orm.backref(
+            'tags',
+            lazy='dynamic'
+        )
+    )
+
+article = Article()
+article.name = 'Some article'
+article.content = 'Some content'
+session.add(article)
+session.commit()
+
+tag_query = article.versions[0].tags
+tag_query.all()  # return all tags for given version
+
+tag_query.count()  # return the tag count for given version
+```

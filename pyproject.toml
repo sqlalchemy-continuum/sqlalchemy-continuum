@@ -13,14 +13,13 @@ authors = [
     {name = "Mark Steward"},
     {name = "Jose Soto"}
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Environment :: Web Environment",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -33,31 +32,18 @@ dependencies = [
     "SQLAlchemy>=1.4.53,<2.1"
 ]
 
+# Extras are user-facing features only; development dependencies live in
+# [dependency-groups] below (PEP 735) so they don't leak into the published
+# package metadata.
 [project.optional-dependencies]
-test = [
-    "pytest>=2.3.5",
-    "psycopg2>=2.4.6",
-    "PyMySQL>=0.8.0",
-    "Flask>=0.9",
-    "Flask-Login>=0.2.9",
-    "Flask-SQLAlchemy>=1.0",
-    "packaging",
-]
-flask = ["Flask>=0.9"]
-flask-login = ["Flask-Login>=0.2.9"]
-flask-sqlalchemy = ["Flask-SQLAlchemy>=1.0"]
-dev = [
-    "ruff>=0.1.0",
-    "tox>=4.0.0",
-    "pre-commit>=3.0.0",
-]
-docs = [
-    "sphinx>=4.0.0",
-    "furo>=2021.11.0",
-]
+flask = ["Flask>=2.0"]
+flask-login = ["Flask-Login>=0.6"]
+flask-sqlalchemy = ["Flask-SQLAlchemy>=3.0"]
 
 [project.urls]
-Homepage = "https://github.com/kvesteri/sqlalchemy-continuum"
+Homepage = "https://github.com/sqlalchemy-continuum/sqlalchemy-continuum"
+Documentation = "https://sqlalchemy-continuum.github.io/"
+Changelog = "https://github.com/sqlalchemy-continuum/sqlalchemy-continuum/blob/main/CHANGES.rst"
 
 [tool.setuptools.packages.find]
 include = ["sqlalchemy_continuum*"]
@@ -67,7 +53,7 @@ include = ["sqlalchemy_continuum*"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py39"
+target-version = "py310"
 exclude = [
     ".bzr",
     ".direnv",
@@ -93,9 +79,19 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-select = ["E4", "E7", "E9", "F"]
-ignore = ["E231", "E402","E702", "E501", "F403", "F541", "E713"]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "T10", # flake8-debugger (breakpoint()/pdb left in code)
+]
+ignore = [
+    "E501",  # line too long, handled by ruff format
+]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
@@ -109,7 +105,30 @@ quote-style = "single"
 indent-style = "space"
 
 [dependency-groups]
-dev = [
-    "pre-commit>=4.3.0",
-    "tox>=4.27.0",
+test = [
+    "pytest>=7.0",
+    "psycopg2>=2.9",
+    "PyMySQL>=1.0",
+    "Flask>=2.0",
+    "Flask-Login>=0.6",
+    "Flask-SQLAlchemy>=3.0",
+    "packaging",
 ]
+docs = [
+    "zensical>=0.0.46",
+    "mkdocstrings-python>=1.16",
+]
+lint = [
+    "ruff>=0.15",
+]
+dev = [
+    { include-group = "test" },
+    { include-group = "docs" },
+    { include-group = "lint" },
+    "tox>=4.27",
+    "pre-commit>=4.3",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--strict-config", "--strict-markers"]

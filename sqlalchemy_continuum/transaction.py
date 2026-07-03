@@ -1,6 +1,4 @@
-from collections import OrderedDict
-from datetime import datetime
-import sys
+from datetime import datetime, timezone
 
 import sqlalchemy as sa
 from sqlalchemy.ext.compiler import compiles
@@ -14,24 +12,12 @@ from .exc import ImproperlyConfigured
 from .factory import ModelFactory
 
 
-# Compatibility function for datetime.utcnow() deprecation
 def utc_now():
     """
-    Return current UTC datetime in a way that's compatible across Python versions.
-
-    In Python 3.11+, datetime.UTC is available and datetime.utcnow() is deprecated.
-    For older versions, we fall back to datetime.utcnow().
+    Return the current UTC datetime as a naive datetime, since the
+    issued_at column below is not tz-aware.
     """
-    if sys.version_info >= (3, 11):
-        # Use the new recommended approach
-        from datetime import timezone
-
-        # Generate the current time in UTC, and then strip tzinfo
-        # since the issued_at column below is not tz-aware
-        return datetime.now(timezone.utc).replace(tzinfo=None)
-    else:
-        # Fall back to the old approach for compatibility
-        return datetime.utcnow()
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 @compiles(sa.types.BigInteger, 'sqlite')
@@ -165,7 +151,7 @@ class TransactionFactory(ModelFactory):
                             'registry. Either configure VersioningManager to '
                             'use different user class or disable this '
                             'relationship '
-                        )
+                        ) from None
 
                 user_id = sa.Column(
                     sa.inspect(user_cls).primary_key[0].type,
@@ -177,24 +163,12 @@ class TransactionFactory(ModelFactory):
 
             def __repr__(self):
                 fields = ['id', 'issued_at', 'user']
-                field_values = OrderedDict(
-                    (field, getattr(self, field))
+                field_values = ', '.join(
+                    f'{field}={getattr(self, field)!r}'
                     for field in fields
                     if hasattr(self, field)
                 )
-                return '<Transaction {}>'.format(
-                    ', '.join(
-                        (
-                            f'{field}={value!r}'
-                            if not isinstance(value, int)
-                            # We want the following line to ensure that longs get
-                            # shown without the ugly L suffix on python 2.x
-                            # versions
-                            else f'{field}={value}'
-                            for field, value in field_values.items()
-                        )
-                    )
-                )
+                return f'<Transaction {field_values}>'
 
         if manager.options['native_versioning']:
             create_triggers(Transaction)

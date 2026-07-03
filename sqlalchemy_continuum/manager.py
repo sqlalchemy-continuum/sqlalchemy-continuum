@@ -2,8 +2,8 @@ from functools import wraps
 
 import sqlalchemy as sa
 from sqlalchemy.orm import object_session
-from ._compat import get_column_key
 
+from ._compat import get_column_key
 from .builder import Builder
 from .fetcher import SubqueryFetcher, ValidityFetcher
 from .operation import Operation
@@ -415,7 +415,7 @@ class VersioningManager:
             .insert()
             .values({**params, 'operation_type': op})
         )
-        uow = self.uow_from_conn(conn)
+        uow = self._uow_from_conn(conn)
         uow.pending_statements.append(stmt)
 
     def track_cloned_connections(self, c, opt):

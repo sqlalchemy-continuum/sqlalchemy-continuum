@@ -1,0 +1,69 @@
+[project]
+site_name = "SQLAlchemy-Continuum"
+site_url = "https://sqlalchemy-continuum.github.io/"
+site_description = "Versioning and auditing extension for SQLAlchemy"
+site_author = "SQLAlchemy-Continuum contributors"
+copyright = "&copy; Konsta Vesterinen and SQLAlchemy-Continuum contributors"
+repo_url = "https://github.com/sqlalchemy-continuum/sqlalchemy-continuum"
+repo_name = "sqlalchemy-continuum"
+docs_dir = "docs"
+site_dir = "site"
+nav = [
+  { "Home" = "index.md" },
+  { "Introduction" = "intro.md" },
+  { "User Guide" = [
+    "version_objects.md",
+    "revert.md",
+    "queries.md",
+    "transactions.md",
+    "native_versioning.md",
+    "plugins.md",
+    "configuration.md",
+    "schema.md",
+    "alembic.md",
+  ] },
+  { "API Reference" = [
+    "utilities.md",
+    "api.md",
+  ] },
+  { "About" = [
+    "changelog.md",
+    "license.md",
+  ] },
+]
+
+[project.theme]
+features = [
+  "navigation.instant",
+  "navigation.sections",
+  "navigation.top",
+  "toc.follow",
+  "content.code.copy",
+]
+
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.def_list]
+[project.markdown_extensions.tables]
+
+[project.markdown_extensions.toc]
+permalink = true
+
+[project.markdown_extensions.pymdownx.details]
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.superfences]
+
+[project.plugins.mkdocstrings.handlers.python]
+inventories = ["https://docs.python.org/3/objects.inv"]
+paths = ["."]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_style = "sphinx"
+show_source = false
+show_root_heading = true

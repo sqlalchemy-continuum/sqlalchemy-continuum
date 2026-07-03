@@ -18,6 +18,7 @@ develop-eggs
 lib
 lib64
 docs/_build
+site/
 
 # Installer logs
 pip-log.txt
@@ -66,11 +67,9 @@ env/
 ENV/
 .env
 .venv
-.python-version
 
 # uv
 .uv/
-uv.lock
 
 # Ruff
 .ruff_cache/

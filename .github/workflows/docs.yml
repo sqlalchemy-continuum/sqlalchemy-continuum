@@ -1,68 +1,76 @@
-name: Build and Deploy Documentation
+name: Docs build check
+
+# Validates that the documentation builds. The published site at
+# https://sqlalchemy-continuum.github.io/ is deployed by the workflow in the
+# sqlalchemy-continuum/sqlalchemy-continuum.github.io repository, which
+# rebuilds nightly, on manual dispatch, and on repository_dispatch
+# (type: docs).
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - "docs/**"
+      - "zensical.toml"
+      - "sqlalchemy_continuum/**"
       - ".github/workflows/docs.yml"
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
       - "docs/**"
+      - "zensical.toml"
+      - "sqlalchemy_continuum/**"
       - ".github/workflows/docs.yml"
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
-      
-      - name: Set up Python
-        run: uv python install 3.13
-      
+        uses: astral-sh/setup-uv@v8.2.0
+
       - name: Create virtual environment
         run: uv venv
-      
-      - name: Install dependencies
-        run: uv pip install -e '.[docs]'
-      
-      - name: Build documentation
-        run: |
-          cd docs
-          uv run sphinx-build -b html . _build/html
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './docs/_build/html'
 
-  deploy:
+      - name: Install dependencies
+        run: uv pip install -e . --group docs
+
+      - name: Build documentation
+        # --no-sync keeps uv run from syncing the full dev group over
+        # the docs-only environment.
+        run: uv run --no-sync zensical build --clean --strict
+
+  # Ask the pages repository to rebuild the published site. Requires a
+  # DOCS_DISPATCH_TOKEN secret (fine-grained PAT with contents:write on
+  # sqlalchemy-continuum.github.io); without it the site still refreshes
+  # nightly.
+  trigger-deploy:
     if: github.ref == 'refs/heads/main'
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    needs: [build]
     runs-on: ubuntu-latest
-    needs: build
+    timeout-minutes: 5
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Dispatch docs deploy
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "DOCS_DISPATCH_TOKEN not configured; the site will refresh on the nightly schedule."
+            exit 0
+          fi
+          gh api -X POST repos/sqlalchemy-continuum/sqlalchemy-continuum.github.io/dispatches \
+            -f event_type=docs

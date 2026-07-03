@@ -9,17 +9,15 @@ need to be queried afterwards for problems such as:
 
 The plugin works in two ways. On class instrumentation phase this plugin
 creates a special transaction model called `TransactionChanges`. This model is
-associated with table called `transaction_changes`, which has only only two
+associated with table called `transaction_changes`, which has only two
 fields: transaction_id and entity_name. If for example transaction consisted
 of saving 5 new User entities and 1 Article entity, two new rows would be
 inserted into transaction_changes table.
 
-================    =================
-transaction_id          entity_name
-----------------    -----------------
-233678                  User
-233678                  Article
-================    =================
+| transaction_id | entity_name |
+|----------------|-------------|
+| 233678         | User        |
+| 233678         | Article     |
 """
 
 import sqlalchemy as sa
@@ -58,8 +56,6 @@ class TransactionChangesFactory(ModelFactory):
 
 
 class TransactionChangesPlugin(Plugin):
-    objects = None
-
     def after_build_tx_class(self, manager):
         self.model_class = TransactionChangesFactory()(manager)
 
@@ -68,8 +64,6 @@ class TransactionChangesPlugin(Plugin):
 
     def before_create_version_objects(self, uow, session):
         for entity in uow.operations.entities:
-            if not hasattr(entity, '__name__'):
-                breakpoint()
             params = uow.current_transaction.id, str(entity.__name__)
             changes = session.get(self.model_class, params)
             if not changes:
@@ -78,15 +72,6 @@ class TransactionChangesPlugin(Plugin):
                     entity_name=str(entity.__name__),
                 )
                 session.add(changes)
-
-    def clear(self):
-        self.objects = None
-
-    def after_rollback(self, uow, session):
-        self.clear()
-
-    def ater_commit(self, uow, session):
-        self.clear()
 
     def after_version_class_built(self, parent_cls, version_cls):
         parent_cls.__versioned__['transaction_changes'] = self.model_class

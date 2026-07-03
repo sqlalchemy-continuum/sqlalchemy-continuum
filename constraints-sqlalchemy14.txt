@@ -1,0 +1,6 @@
+# Constraint file for the tox sqlalchemy14 factor. tox installs deps and
+# dependency-groups in separate pip resolutions, so without a global
+# constraint the test group's Flask-SQLAlchemy>=3.0 pulls 3.1.x, which
+# requires SQLAlchemy>=2.0.16 and silently upgrades SQLAlchemy past the
+# <2.0 pin. PIP_CONSTRAINT applies to every pip invocation in the env.
+SQLAlchemy<2.0

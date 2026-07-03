@@ -3,8 +3,8 @@ from copy import copy
 import sqlalchemy as sa
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import column_property
-from ._compat import get_declarative_base
 
+from ._compat import get_declarative_base
 from .utils import adapt_columns, option
 from .version import VersionClassBase
 
@@ -236,10 +236,8 @@ class ModelBuilder:
         args.update(self.get_inherited_denormalized_columns(table))
 
         if self.manager.options.get('use_module_name', True):
-            name = '{}{}Version'.format(
-                self.model.__module__.title().replace('.', ''),
-                self.model.__name__,
-            )
+            module = self.model.__module__.title().replace('.', '')
+            name = f'{module}{self.model.__name__}Version'
         else:
             name = f'{self.model.__name__}Version'
         return type(name, self.base_classes(), args)

@@ -190,7 +190,7 @@ class TableBuilder:
 
         # Add composite indexes for efficient version queries
         if extends is None:
-            for index in self._build_composite_indexes(table):
+            for _ in self._build_composite_indexes(table):
                 # Indexes are automatically associated with the table when created
                 pass
 
