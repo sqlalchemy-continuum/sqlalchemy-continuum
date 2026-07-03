@@ -19,10 +19,17 @@ updates:
     cooldown:
       default-days: 7
     groups:
+      # One PR for everything in the lockfile, including transitive
+      # dependencies (the previous development-only group left werkzeug,
+      # virtualenv, filelock and friends as individual PRs).
       python-packages:
-        dependency-type: "development"
         patterns:
           - "*"
+    ignore:
+      # The SQLAlchemy version is managed by hand: CI installs explicit
+      # versions per matrix leg, and constraints-sqlalchemy14.txt must keep
+      # its <2.0 pin (Dependabot once rewrote it to <3.0, see PR #382).
+      - dependency-name: "sqlalchemy"
 
   # Keeps pre-commit hook revs up to date.
   - package-ecosystem: "pre-commit"
