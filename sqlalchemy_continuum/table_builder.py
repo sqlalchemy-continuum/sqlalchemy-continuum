@@ -23,6 +23,14 @@ class ColumnReflector:
         column_copy = column._copy()
         column_copy.unique = False
         column_copy.onupdate = None
+
+        # Remove Identity constraints from version table columns.
+        # Version tables receive values from parent tables and should not use
+        # database-level auto-generation. Identity objects also conflict with
+        # autoincrement=False setting below.
+        if isinstance(column_copy.server_default, sa.Identity):
+            column_copy.server_default = None
+
         if column_copy.autoincrement:
             column_copy.autoincrement = False
         if column_copy.name == self.option('transaction_column_name'):
