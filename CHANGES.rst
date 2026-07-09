@@ -5,7 +5,7 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
-- TODO
+- Store per-transaction unit-of-work state on ``connection.info``/``session.info`` instead of global dictionaries on the ``VersioningManager`` singleton, making versioning thread-safe under connection pools and fixing crashes such as ``RuntimeError: dictionary changed size during iteration`` (#390)
 
 1.7.0 (2026-07-02)
 ^^^^^^^^^^^^^^^^^^
