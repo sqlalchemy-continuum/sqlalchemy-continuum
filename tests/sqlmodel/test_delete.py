@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+
 from tests.sqlmodel import SQLModelTestCase
 
 
@@ -24,7 +25,7 @@ class TestDelete(SQLModelTestCase):
 
     def test_creates_versions_on_delete(self):
         self._delete()
-        versions = self.session.query(self.ArticleVersion).all()
+        versions = self.session.scalars(sa.select(self.ArticleVersion)).all()
         assert len(versions) == 2
         assert versions[1].name == 'Some article'
         assert versions[1].content == 'Some content'

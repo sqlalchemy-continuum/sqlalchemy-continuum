@@ -1,9 +1,9 @@
 import sqlalchemy as sa
 from sqlmodel import AutoString, Field
+
 from sqlalchemy_continuum import versioning_manager
-from tests.sqlmodel import SQLModelTestCase
 from sqlalchemy_continuum.plugins import TransactionMetaPlugin
-from typing import Union
+from tests.sqlmodel import SQLModelTestCase
 
 
 class TestTransaction(SQLModelTestCase):
@@ -22,14 +22,23 @@ class TestTransaction(SQLModelTestCase):
         self.session.commit()
         self.article.name = 'Some article'
         self.session.commit()
-        assert self.session.query(versioning_manager.transaction_cls).count() == 1
+        assert (
+            self.session.scalar(
+                sa.select(sa.func.count()).select_from(
+                    versioning_manager.transaction_cls
+                )
+            )
+            == 1
+        )
 
     def test_repr(self):
-        transaction = self.session.query(versioning_manager.transaction_cls).first()
-        assert '<Transaction id=%d, issued_at=%r>' % (
-            transaction.id,
-            transaction.issued_at,
-        ) == repr(transaction)
+        transaction = self.session.scalars(
+            sa.select(versioning_manager.transaction_cls)
+        ).first()
+        assert (
+            f'<Transaction id={transaction.id:d}, issued_at={transaction.issued_at!r}>'
+            == repr(transaction)
+        )
 
     def test_changed_entities(self):
         article_v0 = self.article.versions[0]
@@ -52,7 +61,7 @@ class TestAssigningUserClass(SQLModelTestCase):
         class User(self.Model, table=True):
             __tablename__ = 'user'
             __versioned__ = {}
-            id: Union[str, None] = Field(default=None, primary_key=True)
+            id: str | None = Field(default=None, primary_key=True)
             name: str = Field(sa_type=sa.Unicode(255), nullable=False)
 
         self.User = User
@@ -71,7 +80,7 @@ class TestAssigningUserClassInOtherSchema(SQLModelTestCase):
             __versioned__ = {}
             __table_args__ = {'schema': 'other'}
 
-            id: Union[str, None] = Field(default=None, primary_key=True)
+            id: str | None = Field(default=None, primary_key=True)
             name: str = Field(sa_type=sa.Unicode(255), nullable=False)
 
         self.User = User

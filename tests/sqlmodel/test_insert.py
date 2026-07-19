@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 import sqlmodel
+
 from sqlalchemy_continuum import versioning_manager
-from typing import Union
 from tests.sqlmodel import SQLModelTestCase
 
 
@@ -41,13 +41,13 @@ class TestInsertNonVersionedObjectSQLModel(SQLModelTestCase):
 
         class TextItem(self.Model, table=True):
             __tablename__ = 'text_item'
-            id: Union[int, None] = sqlmodel.Field(default=None, primary_key=True)
+            id: int | None = sqlmodel.Field(default=None, primary_key=True)
             name: str = sqlmodel.Field(sa.Unicode(255))
 
         class Tag(self.Model, table=True):
             __tablename__ = 'tag'
             __versioned__ = {}
-            id: Union[int, None] = sqlmodel.Field(default=None, primary_key=True)
+            id: int | None = sqlmodel.Field(default=None, primary_key=True)
             name: str = sqlmodel.Field(sa.Unicode(255))
 
         self.TextItem = TextItem
@@ -63,4 +63,11 @@ class TestInsertNonVersionedObjectSQLModel(SQLModelTestCase):
         self.session.add(item)
         self.session.commit()
 
-        assert self.session.query(versioning_manager.transaction_cls).count() == 0
+        assert (
+            self.session.scalar(
+                sa.select(sa.func.count()).select_from(
+                    versioning_manager.transaction_cls
+                )
+            )
+            == 0
+        )

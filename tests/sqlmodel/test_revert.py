@@ -1,10 +1,9 @@
-from pytest import raises
 import sqlalchemy as sa
+from pytest import raises
 from sqlmodel import Field, Relationship
-from sqlalchemy_continuum.reverter import Reverter, ReverterException
 
+from sqlalchemy_continuum.reverter import Reverter, ReverterException
 from tests.sqlmodel import SQLModelTestCase
-from typing import Union
 
 
 class TestReverter(SQLModelTestCase):
@@ -56,14 +55,18 @@ class RevertTestCase(SQLModelTestCase):
         self.session.commit()
         version.revert()
         self.session.commit()
-        assert self.session.query(self.Article).count() == 1
-        article = self.session.query(self.Article).get(old_article_id)
+        assert (
+            self.session.scalar(sa.select(sa.func.count()).select_from(self.Article))
+            == 1
+        )
+
+        article = self.session.get(self.Article, old_article_id)
 
         assert version.next.next
 
         version.next.revert()
         self.session.commit()
-        assert not self.session.query(self.Article).get(old_article_id)
+        assert not self.session.get(self.Article, old_article_id)
 
     def test_revert_version_with_one_to_many_relation(self):
         article = self.Article(name='Some article', content='Some content')
@@ -160,7 +163,7 @@ class TestRevertWithColumnExclusion(RevertTestCase):
 
             id: int = Field(sa_type=sa.Integer, primary_key=True)
             name: str = Field(sa_type=sa.Unicode(255))
-            article_id: Union[int, None] = Field(default=None, foreign_key='article.id')
+            article_id: int | None = Field(default=None, foreign_key='article.id')
             article: Article = Relationship(back_populates='tags')
 
         self.Article = Article
