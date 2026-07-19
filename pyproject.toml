@@ -133,3 +133,6 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["--strict-config", "--strict-markers"]
+filterwarnings = [
+    "ignore:\\s*.*You probably want to use.*session\\.query.*:DeprecationWarning",
+]
