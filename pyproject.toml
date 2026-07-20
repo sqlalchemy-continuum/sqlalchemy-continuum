@@ -112,6 +112,7 @@ test = [
     "Flask>=2.0",
     "Flask-Login>=0.6",
     "Flask-SQLAlchemy>=3.0",
+    "SQLModel>=0.0.24",
     "packaging",
 ]
 docs = [
@@ -132,3 +133,6 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["--strict-config", "--strict-markers"]
+filterwarnings = [
+    "ignore:\\s*.*You probably want to use.*session\\.query.*:DeprecationWarning",
+]
