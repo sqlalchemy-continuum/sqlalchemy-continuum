@@ -12,7 +12,7 @@ repos:
   # ruff's UP (pyupgrade) rules enforce Python 3.10+ idioms; the standalone
   # pyupgrade hook is no longer needed.
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.20
+    rev: v0.15.22
     hooks:
       - id: ruff-check
         args: [--fix]
