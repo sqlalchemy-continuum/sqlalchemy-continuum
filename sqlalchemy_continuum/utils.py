@@ -7,6 +7,7 @@ from sqlalchemy.orm.attributes import get_history
 from sqlalchemy.orm.util import AliasedClass
 
 from ._compat import (
+    get_declarative_base,
     get_primary_keys,
     identity,
     naturally_equivalent,
@@ -411,6 +412,25 @@ class VersioningClauseAdapter(sa.sql.visitors.ReplacingCloningVisitor):
         if isinstance(col, sa.Column):
             table = version_table(col.table)
             return table.c.get(col.key)
+
+
+class DeclarativeBaseResolver:
+    """Resolves declarative base class from either SQLModel or sqlalchemy registry."""
+
+    _sa_base = None
+
+    def __call__(self, model):
+        if hasattr(model, 'registry'):
+            # This is NOT SQLModel
+            return get_declarative_base(model)
+        else:
+            # SQLModel compatibility
+            if DeclarativeBaseResolver._sa_base is None:
+                DeclarativeBaseResolver._sa_base = model._sa_registry.generate_base()
+            return DeclarativeBaseResolver._sa_base
+
+
+declarative_base_resolver = DeclarativeBaseResolver()
 
 
 def adapt_columns(expr):

@@ -10,6 +10,7 @@ from .dialects.postgresql import (
 )
 from .exc import ImproperlyConfigured
 from .factory import ModelFactory
+from .utils import declarative_base_resolver
 
 
 def utc_now():
@@ -138,7 +139,7 @@ class TransactionFactory(ModelFactory):
 
             if manager.user_cls:
                 user_cls = manager.user_cls
-                Base = manager.declarative_base
+                Base = declarative_base_resolver(manager.declarative_base)
                 registry = Base.registry._class_registry
 
                 if isinstance(user_cls, str):
