@@ -116,7 +116,9 @@ hstore-based change detection, temp-table transaction-id plumbing),
 ## Code style
 
 - Ruff is the only linter/formatter: line length 88, single quotes, rule
-  families `E/W/F/I/B/C4/UP`, target py310. Pre-commit runs the same hooks.
+  families `E/W/F/I/B/C4/UP`, target py310. Pre-commit runs the same hooks,
+  and the CI `lint` job runs pre-commit, so `.pre-commit-config.yaml` pins
+  CI's ruff version.
 - Docstrings: summary + RST `:param x:` field lists (griffe's sphinx parser
   reads them for the docs), but example blocks inside docstrings are
   Markdown fenced code blocks (the docs are built with Zensical +

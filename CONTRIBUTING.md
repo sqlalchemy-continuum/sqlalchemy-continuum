@@ -55,7 +55,8 @@ uv run ruff check --fix
 uv run ruff format
 ```
 
-Pre-commit runs the same checks on every commit if you installed the hook.
+Pre-commit runs the same checks on every commit if you installed the hook,
+and CI runs them on every pull request.
 
 ## Documentation
 
