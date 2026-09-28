@@ -63,6 +63,9 @@ class TestAssigningUserClass(TestCase):
         attr = versioning_manager.transaction_cls.user_id
         assert isinstance(attr.property.columns[0].type, sa.Unicode)
 
+    def test_does_not_shadow_declarative_registry(self):
+        assert versioning_manager.transaction_cls.registry is self.Model.registry
+
 
 class TestAssigningUserClassInOtherSchema(TestCase):
     user_cls = 'User'

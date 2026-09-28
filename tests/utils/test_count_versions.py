@@ -21,6 +21,15 @@ class TestCountVersions(TestCase):
         self.session.commit()
         assert count_versions(article) == 2
 
+    def test_count_versions_does_not_flush_pending_changes(self):
+        article = self.Article(name='Some article')
+        self.session.add(article)
+        self.session.commit()
+        self.session.autoflush = True
+        article.name = 'Updated article'
+        assert count_versions(article) == 1
+        assert article in self.session.dirty
+
     def test_count_versions_with_multiple_objects(self):
         article = self.Article(name='Some article')
         self.session.add(article)

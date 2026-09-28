@@ -121,6 +121,21 @@ class TransactionFactory(ModelFactory):
         """
         Create Transaction class.
         """
+        # Resolved outside the class body so these names don't become
+        # attributes of the mapped class ('registry' is reserved by Declarative).
+        user_cls = manager.user_cls
+        if user_cls and isinstance(user_cls, str):
+            registry = manager.declarative_base.registry._class_registry
+            try:
+                user_cls = registry[user_cls]
+            except KeyError:
+                raise ImproperlyConfigured(
+                    'Could not build relationship between Transaction'
+                    f' and {user_cls}. {user_cls} was not found in declarative class '
+                    'registry. Either configure VersioningManager to '
+                    'use different user class or disable this '
+                    'relationship '
+                ) from None
 
         class Transaction(manager.declarative_base, TransactionBase):
             __tablename__ = 'transaction'
@@ -136,23 +151,7 @@ class TransactionFactory(ModelFactory):
             if self.remote_addr:
                 remote_addr = sa.Column(sa.String(50))
 
-            if manager.user_cls:
-                user_cls = manager.user_cls
-                Base = manager.declarative_base
-                registry = Base.registry._class_registry
-
-                if isinstance(user_cls, str):
-                    try:
-                        user_cls = registry[user_cls]
-                    except KeyError:
-                        raise ImproperlyConfigured(
-                            'Could not build relationship between Transaction'
-                            f' and {user_cls}. {user_cls} was not found in declarative class '
-                            'registry. Either configure VersioningManager to '
-                            'use different user class or disable this '
-                            'relationship '
-                        ) from None
-
+            if user_cls:
                 user_id = sa.Column(
                     sa.inspect(user_cls).primary_key[0].type,
                     sa.ForeignKey(sa.inspect(user_cls).primary_key[0]),

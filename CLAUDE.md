@@ -5,7 +5,7 @@ every flush of a versioned model writes a row to a `<table>_version` table
 tied to a `transaction` record. This repo is the maintained fork published to
 PyPI as `SQLAlchemy-Continuum` (GitHub org `sqlalchemy-continuum`).
 
-Supports Python >= 3.10 and SQLAlchemy >= 1.4.53, < 2.1 — code must work on
+Supports Python >= 3.10 and SQLAlchemy >= 1.4.53, < 2.2 — code must work on
 BOTH the 1.4 and 2.x lines (use the 1.4 "future" API: `sa.select()`,
 `session.get()`, `scalar_subquery()`, `session.scalars()`).
 
@@ -108,7 +108,8 @@ hstore-based change detection, temp-table transaction-id plumbing),
 - String-form skipifs like `@pytest.mark.skipif('uses_native_versioning()')`
   are evaluated in the test module's namespace — the seemingly unused imports
   they reference are load-bearing (ruff per-file-ignore F401 covers this).
-- `tests/__init__.py` turns every `SAWarning` into an error suite-wide.
+- pytest `filterwarnings` (in `pyproject.toml`) turns every `SAWarning` into
+  an error suite-wide.
 - `tests/test_user_guide_examples.py` mirrors the examples in `docs/` — when
   changing documented behavior, update both.
 
