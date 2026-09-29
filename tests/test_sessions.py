@@ -1,3 +1,6 @@
+import os
+
+import pytest
 from sqlalchemy.orm.session import Session
 
 from sqlalchemy_continuum import UnitOfWork, versioning_manager
@@ -14,6 +17,11 @@ class TestSessions(TestCase):
         self.session2.commit()
         assert list(article.versions)[-1].transaction_id
 
+    # In-memory SQLite serves every ``engine.connect()`` from a single shared
+    # DBAPI connection, so the two sessions below actually share one database
+    # connection (hence one transaction) and cannot exercise the
+    # multiple-connections path. Runs on backends with a real connection pool.
+    @pytest.mark.skipif("os.environ.get('DB', 'sqlite') == 'sqlite'")
     def test_multiple_connections(self):
         self.session2 = Session(bind=self.engine.connect())
         article = self.Article(name='Session1 article')

@@ -19,6 +19,7 @@ from sqlalchemy_continuum import (
     version_class,
     versioning_manager,
 )
+from sqlalchemy_continuum.manager import CONN_KEY, UOW_KEY
 from sqlalchemy_continuum.plugins import TransactionChangesPlugin, TransactionMetaPlugin
 from sqlalchemy_continuum.transaction import TransactionFactory
 
@@ -122,8 +123,12 @@ class TestCase:
 
     def teardown_method(self, method):
         self.session.rollback()
-        uow_leaks = versioning_manager.units_of_work
-        session_map_leaks = versioning_manager.session_connection_map
+        # The unit of work now lives on connection.info / session.info rather
+        # than on global dicts, so assert cleanup happened on the test's own
+        # connection and session. (engine.dispose() below discards the pool, so
+        # nothing can bleed into the next test regardless.)
+        uow_leaks = self.connection.info.get(UOW_KEY)
+        session_map_leaks = self.session.info.get(CONN_KEY)
 
         remove_versioning()
         QueryPool.queries = []
@@ -143,8 +148,8 @@ class TestCase:
         self.connection.close()
         self.engine.dispose()
 
-        assert not uow_leaks
-        assert not session_map_leaks
+        assert uow_leaks is None
+        assert session_map_leaks is None
 
     def create_models(self):
         class Article(self.Model):
