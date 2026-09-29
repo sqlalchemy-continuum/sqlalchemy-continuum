@@ -5,6 +5,10 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
+- TODO
+
+1.8.0 (2026-09-28)
+^^^^^^^^^^^^^^^^^^
 - Add support for SQLAlchemy 2.1 (supported range is now ``>=1.4.53,<2.2``; SQLAlchemy 2.1 itself requires Python 3.11+)
 - Fix the ``Transaction`` model gaining stray ``registry``, ``Base`` and ``user_cls`` class attributes when ``user_cls`` is configured; ``registry`` shadowed the declarative registry and raises an ``SAWarning`` on SQLAlchemy 2.1
 - Fix an exception during mapper configuration silently disabling version model building for every later configuration
