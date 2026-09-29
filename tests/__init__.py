@@ -1,7 +1,6 @@
 import inspect
 import itertools as it
 import os
-import warnings
 from copy import copy
 
 import sqlalchemy as sa
@@ -23,8 +22,6 @@ from sqlalchemy_continuum import (
 from sqlalchemy_continuum.plugins import TransactionChangesPlugin, TransactionMetaPlugin
 from sqlalchemy_continuum.transaction import TransactionFactory
 
-warnings.simplefilter('error', sa.exc.SAWarning)
-
 
 class QueryPool:
     queries = []
@@ -41,7 +38,8 @@ def get_url_from_driver(driver):
         return url
 
     if driver == 'postgres':
-        return 'postgresql://postgres:postgres@localhost/main'
+        # Explicit driver: SQLAlchemy 2.1 defaults postgresql:// to psycopg 3.
+        return 'postgresql+psycopg2://postgres:postgres@localhost/main'
     elif driver == 'mysql':
         # NB username is also in create_schema
         return 'mysql+pymysql://root@localhost/main'

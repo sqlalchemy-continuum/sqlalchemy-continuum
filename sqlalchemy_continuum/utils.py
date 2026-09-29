@@ -362,7 +362,9 @@ def count_versions(obj):
     table_name = manager.option(obj, 'table_name') % obj.__table__.name
     criteria = [f'{pk} = {getattr(obj, pk)!r}' for pk in get_primary_keys(obj)]
     query = sa.text(f'SELECT COUNT(1) FROM {table_name} WHERE {" AND ".join(criteria)}')
-    return session.execute(query).scalar()
+    # SQLAlchemy 2.1 autoflushes Core statements; counting must not write versions.
+    with session.no_autoflush:
+        return session.execute(query).scalar()
 
 
 def changeset(obj):

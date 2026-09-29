@@ -29,7 +29,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 dependencies = [
-    "SQLAlchemy>=1.4.53,<2.1"
+    "SQLAlchemy>=1.4.53,<2.2"
 ]
 
 # Extras are user-facing features only; development dependencies live in
@@ -132,3 +132,4 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["--strict-config", "--strict-markers"]
+filterwarnings = ["error::sqlalchemy.exc.SAWarning"]

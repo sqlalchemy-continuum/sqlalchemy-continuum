@@ -4,7 +4,11 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 ## Unreleased changes
 
-- TODO
+- Add support for SQLAlchemy 2.1 (supported range is now `>=1.4.53,<2.2`; SQLAlchemy 2.1 itself requires Python 3.11+)
+- Fix the `Transaction` model gaining stray `registry`, `Base` and `user_cls` class attributes when `user_cls` is configured; `registry` shadowed the declarative registry and raises an `SAWarning` on SQLAlchemy 2.1
+- Fix an exception during mapper configuration silently disabling version model building for every later configuration
+- Fix `generic_relationship` (used by `ActivityPlugin`) raising `ValueError` on SQLAlchemy pre-release versions such as `2.1.0rc2`
+- `count_versions()` no longer flushes pending session changes on SQLAlchemy 2.1, which autoflushes textual SQL; the count matches 1.4 and 2.0
 
 ## 1.7.0 (2026-07-02)
 

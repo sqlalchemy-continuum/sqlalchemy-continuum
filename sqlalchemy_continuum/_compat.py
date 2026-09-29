@@ -381,7 +381,16 @@ class JSONType(sa.types.TypeDecorator):
 # ==============================================================================
 
 
-class GenericAttributeImpl(attributes.ScalarAttributeImpl):
+# Made private in SQLAlchemy 2.1.
+_ScalarAttributeImpl = (
+    getattr(attributes, 'ScalarAttributeImpl', None) or attributes._ScalarAttributeImpl
+)
+_register_attribute = (
+    getattr(attributes, 'register_attribute', None) or attributes._register_attribute
+)
+
+
+class GenericAttributeImpl(_ScalarAttributeImpl):
     """
     Custom attribute implementation for generic relationships.
 
@@ -391,18 +400,13 @@ class GenericAttributeImpl(attributes.ScalarAttributeImpl):
 
     def __init__(self, *args, **kwargs):
         """
-        The constructor of attributes.AttributeImpl changed in SQLAlchemy 2.0.22,
-        adding a 'default_function' required positional argument before 'dispatch'.
-        This adjustment ensures compatibility across versions by inserting None for
-        'default_function' in versions >= 2.0.22.
-
-        Arguments received: (class, key, dispatch)
-        Required by AttributeImpl: (class, key, default_function, dispatch)
-        Setting None as default_function here.
+        Since SQLAlchemy 2.0.22 a custom impl_class is constructed with
+        (class, key, dispatch) instead of (class, key, callable_, dispatch),
+        while AttributeImpl still requires callable_ before dispatch. Insert
+        None for callable_ when it is missing. Checking the argument count
+        rather than sa.__version__ also handles pre-release version strings.
         """
-        # Adjust for SQLAlchemy version change
-        sqlalchemy_version = tuple(map(int, sa.__version__.split('.')))
-        if sqlalchemy_version >= (2, 0, 22):
+        if len(args) == 3:
             args = (*args[:2], None, *args[2:])
 
         super().__init__(*args, **kwargs)
@@ -562,7 +566,7 @@ class GenericRelationshipProperty(MapperProperty):
             return self.property._discriminator_col.in_(class_names)
 
     def instrument_class(self, mapper):
-        attributes.register_attribute(
+        _register_attribute(
             mapper.class_,
             self.key,
             comparator=self.Comparator(self, mapper),

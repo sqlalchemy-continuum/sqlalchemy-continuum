@@ -21,8 +21,10 @@ def prevent_reentry(handler):
         if in_handler:
             return
         in_handler = True
-        handler(*args, **kwargs)
-        in_handler = False
+        try:
+            handler(*args, **kwargs)
+        finally:
+            in_handler = False
 
     return check_reentry
 
