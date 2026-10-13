@@ -5,7 +5,9 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
-- TODO
+- Drop Python 3.10 support (EOL October 2026); the minimum supported Python is now 3.11
+- Add Python 3.15 support
+- Update ruff to 0.17, which also formats the code examples in the documentation
 
 1.8.0 (2026-09-28)
 ^^^^^^^^^^^^^^^^^^

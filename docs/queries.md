@@ -44,9 +44,7 @@ TransactionChanges = Article.__versioned__['transaction_changes']
 entries = (
     session.query(Transaction)
     .join(Transaction.changes)
-    .filter(
-        TransactionChanges.entity_name.in_(['Article'])
-    )
+    .filter(TransactionChanges.entity_name.in_(['Article']))
 )
 ```
 
@@ -75,11 +73,7 @@ at a specific transaction. This is much faster than iterating through versions m
 ArticleVersion = version_class(Article)
 
 # Get the version of Article #5 that was active at transaction #100
-version = ArticleVersion.version_at(
-    session,
-    {'id': 5},
-    transaction_id=100
-)
+version = ArticleVersion.version_at(session, {'id': 5}, transaction_id=100)
 ```
 
 For the validity strategy (default), this uses an efficient range query:
@@ -103,9 +97,9 @@ ArticleVersion = version_class(Article)
 versions = ArticleVersion.all_versions(
     session,
     {'id': 5},
-    limit=10,      # Optional: limit to 10 most recent
-    desc=True,     # Newest first (default)
-    link=True      # Pre-populate previous/next caches (default)
+    limit=10,  # Optional: limit to 10 most recent
+    desc=True,  # Newest first (default)
+    link=True,  # Pre-populate previous/next caches (default)
 )
 
 # Now iteration doesn't trigger additional queries
@@ -132,10 +126,7 @@ while version:
 
 ```python
 # GOOD: Single query, then iterate in memory
-versions = ArticleVersion.all_versions(
-    session,
-    {'id': article.id}
-)
+versions = ArticleVersion.all_versions(session, {'id': article.id})
 for version in versions:
     process(version)
 ```
@@ -173,9 +164,7 @@ Or per-model:
 
 ```python
 class Article(Base):
-    __versioned__ = {
-        'create_composite_index': False
-    }
+    __versioned__ = {'create_composite_index': False}
 ```
 
 ### Recommended Additional Indexes
@@ -191,7 +180,7 @@ Index(
     'ix_article_version_id_operation',
     ArticleVersion.id,
     ArticleVersion.operation_type,
-    ArticleVersion.transaction_id
+    ArticleVersion.transaction_id,
 )
 ```
 
@@ -214,7 +203,7 @@ fields changed, consider partial indexes:
 Index(
     'ix_article_version_name_mod',
     ArticleVersion.id,
-    postgresql_where=ArticleVersion.name_mod.is_(True)
+    postgresql_where=ArticleVersion.name_mod.is_(True),
 )
 ```
 

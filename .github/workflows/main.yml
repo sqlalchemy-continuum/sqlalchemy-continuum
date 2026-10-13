@@ -38,11 +38,11 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - "3.10"
           - "3.11"
           - "3.12"
           - "3.13"
           - "3.14"
+          - "3.15"
         sqlalchemy-version:
           - ">=1.4,<2.0"
           - ">=2.0,<2.1"
@@ -52,10 +52,6 @@ jobs:
           - postgres
           - postgres-native
           - mysql
-        exclude:
-          # SQLAlchemy 2.1 requires Python >= 3.11.
-          - python-version: "3.10"
-            sqlalchemy-version: ">=2.1"
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:

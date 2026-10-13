@@ -14,9 +14,7 @@ As the name suggests class level configuration only applies to given class. Clas
 
 ```python
 class User(Base):
-    __versioned__ = {
-        'transaction_column_name': 'tx_id'
-    }
+    __versioned__ = {'transaction_column_name': 'tx_id'}
 ```
 
 ## Versioning strategies
@@ -61,9 +59,7 @@ With `exclude` configuration option you can define which entity attributes you w
 
 ```python
 class User(Base):
-    __versioned__ = {
-        'exclude': ['picture']
-    }
+    __versioned__ = {'exclude': ['picture']}
 
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.Unicode(255))
@@ -102,9 +98,7 @@ Example
 
 ```python
 class Article(Base):
-    __versioned__ = {
-        'transaction_column_name': 'tx_id'
-    }
+    __versioned__ = {'transaction_column_name': 'tx_id'}
     __tablename__ = 'article'
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)

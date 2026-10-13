@@ -64,10 +64,7 @@ class Tag(Base):
 Now lets say some user first adds an article with couple of tags:
 
 ```python
-article = Article(
-    name='Some article',
-    tags=[Tag(name='Good'), Tag(name='Interesting')]
-)
+article = Article(name='Some article', tags=[Tag(name='Good'), Tag(name='Interesting')])
 
 session.add(article)
 session.commit()

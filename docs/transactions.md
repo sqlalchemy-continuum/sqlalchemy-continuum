@@ -8,6 +8,7 @@ Transaction can be queried just like any other sqlalchemy declarative model.
 
 ```python
 from sqlalchemy_continuum import transaction_class
+
 Transaction = transaction_class(Article)
 
 # find all transactions
