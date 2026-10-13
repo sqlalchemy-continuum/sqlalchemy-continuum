@@ -103,10 +103,7 @@ Lastly we check the category relations of different article versions.
 
 ```python
 category = Category(name='Some category')
-article = Article(
-    name='Some article',
-    category=category
-)
+article = Article(name='Some article', category=category)
 session.add(article)
 session.commit()
 
@@ -146,10 +143,7 @@ Here Article versions will still reflect the relationships of Article model but 
 
 ```python
 category = Category(name='Some category')
-article = Article(
-    name='Some article',
-    category=category
-)
+article = Article(name='Some article', category=category)
 session.add(article)
 session.commit()
 
@@ -157,7 +151,7 @@ article.category = Category(name='Some other category')
 session.commit()
 
 version = article.versions[0]
-version.category.name                   # 'Some other category'
+version.category.name  # 'Some other category'
 isinstance(version.category, Category)  # True
 ```
 
@@ -183,12 +177,9 @@ class Tag(Base):
     name = sa.Column(sa.Unicode(255))
     article_id = sa.Column(sa.Integer, sa.ForeignKey(Article.id))
     article = sa.orm.relationship(
-        Article,
-        backref=sa.orm.backref(
-            'tags',
-            lazy='dynamic'
-        )
+        Article, backref=sa.orm.backref('tags', lazy='dynamic')
     )
+
 
 article = Article()
 article.name = 'Some article'

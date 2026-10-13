@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import sqlalchemy as sa
 from sqlalchemy.ext.compiler import compiles
@@ -17,7 +17,7 @@ def utc_now():
     Return the current UTC datetime as a naive datetime, since the
     issued_at column below is not tz-aware.
     """
-    return datetime.now(timezone.utc).replace(tzinfo=None)
+    return datetime.now(UTC).replace(tzinfo=None)
 
 
 @compiles(sa.types.BigInteger, 'sqlite')

@@ -13,18 +13,18 @@ authors = [
     {name = "Mark Steward"},
     {name = "Jose Soto"}
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Environment :: Web Environment",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
@@ -53,7 +53,7 @@ include = ["sqlalchemy_continuum*"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py311"
 exclude = [
     ".bzr",
     ".direnv",
@@ -119,7 +119,7 @@ docs = [
     "mkdocstrings-python>=1.16",
 ]
 lint = [
-    "ruff>=0.15",
+    "ruff>=0.17",
 ]
 dev = [
     { include-group = "test" },

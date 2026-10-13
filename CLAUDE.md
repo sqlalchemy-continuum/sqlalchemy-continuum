@@ -5,7 +5,7 @@ every flush of a versioned model writes a row to a `<table>_version` table
 tied to a `transaction` record. This repo is the maintained fork published to
 PyPI as `SQLAlchemy-Continuum` (GitHub org `sqlalchemy-continuum`).
 
-Supports Python >= 3.10 and SQLAlchemy >= 1.4.53, < 2.2 — code must work on
+Supports Python >= 3.11 and SQLAlchemy >= 1.4.53, < 2.2 — code must work on
 BOTH the 1.4 and 2.x lines (use the 1.4 "future" API: `sa.select()`,
 `session.get()`, `scalar_subquery()`, `session.scalars()`).
 
@@ -116,7 +116,7 @@ hstore-based change detection, temp-table transaction-id plumbing),
 ## Code style
 
 - Ruff is the only linter/formatter: line length 88, single quotes, rule
-  families `E/W/F/I/B/C4/UP`, target py310. Pre-commit runs the same hooks,
+  families `E/W/F/I/B/C4/UP`, target py311. Pre-commit runs the same hooks,
   and the CI `lint` job runs pre-commit, so `.pre-commit-config.yaml` pins
   CI's ruff version.
 - Docstrings: summary + RST `:param x:` field lists (griffe's sphinx parser
