@@ -93,7 +93,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.2.0
       - name: Create virtual environment
         run: uv venv --python ${{ matrix.python-version }}
       - name: Install dependencies
