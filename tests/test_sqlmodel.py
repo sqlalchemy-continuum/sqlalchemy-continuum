@@ -14,8 +14,6 @@ pytestmark = pytest.mark.filterwarnings(
 
 
 class SQLModelTestCase(TestCase):
-    user_cls = 'User'
-
     @property
     def options(self):
         return {**super().options, 'base_classes': None}
@@ -24,6 +22,10 @@ class SQLModelTestCase(TestCase):
         super().setup_method(method)
         self.session.close()
         self.session = sqlmodel.Session(self.connection, autoflush=False)
+
+
+class SQLModelVersioningTestCase(SQLModelTestCase):
+    user_cls = 'User'
 
     def create_models(self):
         # A registry per test, like the declarative_base() TestCase uses.
@@ -91,23 +93,6 @@ class SQLModelTestCase(TestCase):
             'transaction',
         } <= set(self.Model.metadata.tables)
 
-    # Mirrors the example in docs/sqlmodel.md.
-    def test_versions_and_revert(self):
-        article = self.Article(name='Some article')
-        self.session.add(article)
-        self.session.commit()
-
-        article.name = 'Updated article'
-        self.session.commit()
-        assert [version.name for version in article.versions] == [
-            'Some article',
-            'Updated article',
-        ]
-
-        article.versions[0].revert()
-        self.session.commit()
-        assert article.name == 'Some article'
-
     def test_delete(self):
         article = self.Article(name='Some article')
         self.session.add(article)
@@ -154,4 +139,45 @@ class SQLModelTestCase(TestCase):
         assert article.versions[1].categories == []
 
 
-create_test_cases(SQLModelTestCase, {'versioning_strategy': ['subquery', 'validity']})
+create_test_cases(
+    SQLModelVersioningTestCase, {'versioning_strategy': ['subquery', 'validity']}
+)
+
+
+# Mirrors the example in docs/sqlmodel.md, which uses SQLModel's default
+# registry rather than one per test.
+class TestSQLModelUserGuide(SQLModelTestCase):
+    def create_models(self):
+        class Article(sqlmodel.SQLModel, table=True):
+            __versioned__ = {}
+
+            id: int | None = sqlmodel.Field(default=None, primary_key=True)
+            name: str
+
+        self.Model = sqlmodel.SQLModel
+        self.Article = Article
+
+    def teardown_method(self, method):
+        super().teardown_method(method)
+        # The default registry is process-wide; drop this test's classes and
+        # tables so later declarations of the same names don't collide.
+        self.Model.metadata.clear()
+        sa.inspect(self.Article).registry.dispose()
+
+    def test_versions_and_revert(self):
+        assert {'article_version', 'transaction'} <= set(self.Model.metadata.tables)
+
+        article = self.Article(name='Some article')
+        self.session.add(article)
+        self.session.commit()
+
+        article.name = 'Updated article'
+        self.session.commit()
+        assert [version.name for version in article.versions] == [
+            'Some article',
+            'Updated article',
+        ]
+
+        article.versions[0].revert()
+        self.session.commit()
+        assert article.name == 'Some article'

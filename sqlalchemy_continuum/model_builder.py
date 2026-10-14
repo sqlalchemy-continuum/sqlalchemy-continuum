@@ -32,6 +32,8 @@ def resolve_declarative_base(model):
     Returns the declarative base of given model. Models whose base class isn't
     a declarative base of their registry, such as SQLModel models, get a base
     generated from that registry.
+
+    :param model: SQLAlchemy mapped model class
     """
     registry = sa.inspect(model).registry
     base = get_declarative_base(model)
