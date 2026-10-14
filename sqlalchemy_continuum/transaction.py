@@ -67,8 +67,8 @@ class TransactionBase:
 
             tx_column = manager.option(class_, 'transaction_column_name')
 
-            entities[version_class] = (
-                session.query(version_class).filter(
+            entities[version_class] = session.scalars(
+                sa.select(version_class).where(
                     getattr(version_class, tx_column) == self.id
                 )
             ).all()

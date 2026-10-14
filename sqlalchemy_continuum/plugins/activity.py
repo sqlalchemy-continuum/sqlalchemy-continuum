@@ -222,13 +222,11 @@ class ActivityFactory(ModelFactory):
                     model = obj.__class__
                     version_cls = version_class(model)
                     primary_key = inspect(model).primary_key[0].name
-                    return (
-                        session.query(sa.func.max(version_cls.transaction_id))
-                        .filter(
+                    return session.scalar(
+                        sa.select(sa.func.max(version_cls.transaction_id)).where(
                             getattr(version_cls, primary_key)
                             == getattr(obj, primary_key)
                         )
-                        .scalar()
                     )
 
             def calculate_object_tx_id(self):

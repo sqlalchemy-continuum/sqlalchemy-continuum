@@ -44,4 +44,4 @@ The version tables and the `transaction` table are added to the metadata of your
 
 The generated version classes are plain SQLAlchemy declarative classes on the registry of your models, not SQLModel classes. If you set the `base_classes` [option](configuration.md), list declarative classes there; SQLModel classes can't be used as version class bases.
 
-SQLModel's `Session` deprecates `query()` and `execute()`, which the `versions` relationship and some version lookups still call, so your test runs may show SQLModel's `DeprecationWarning`. It doesn't affect versioning.
+SQLModel's `Session` deprecates `query()`, which the dynamic `versions` relationship still uses, so accessing `versions` may show SQLModel's `DeprecationWarning` in your test runs. It doesn't affect versioning.
