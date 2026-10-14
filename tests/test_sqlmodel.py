@@ -1,13 +1,12 @@
 import pytest
 import sqlalchemy as sa
+import sqlmodel
 
 from sqlalchemy_continuum import Operation, versioning_manager
 from tests import TestCase, create_test_cases
 
-sqlmodel = pytest.importorskip('sqlmodel')
-
-# SQLModel's Session deprecates query() and execute(), which the dynamic
-# `versions` relationship and some version lookups still call.
+# SQLModel's Session deprecates query(), which the dynamic `versions`
+# relationship still uses.
 pytestmark = pytest.mark.filterwarnings(
     r'ignore:\s*.*session\.exec\(\):DeprecationWarning'
 )

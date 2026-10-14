@@ -54,6 +54,8 @@ class TestRelationshipToNonVersionedClass(TestCase):
 
 
 class TestManyToManyRelationshipToNonVersionedClass(TestCase):
+    articles_lazy = 'select'
+
     def create_models(self):
         class Article(self.Model):
             __tablename__ = 'article'
@@ -81,7 +83,7 @@ class TestManyToManyRelationshipToNonVersionedClass(TestCase):
             name = sa.Column(sa.Unicode(255))
 
         Tag.articles = sa.orm.relationship(
-            Article, secondary=article_tag, backref='tags'
+            Article, secondary=article_tag, backref='tags', lazy=self.articles_lazy
         )
 
         self.Article = Article
@@ -97,3 +99,9 @@ class TestManyToManyRelationshipToNonVersionedClass(TestCase):
         self.session.commit()
         assert len(article.versions[0].tags) == 1
         assert isinstance(article.versions[0].tags[0], self.Tag)
+
+
+class TestNonVersionedClassWithJoinedCollection(
+    TestManyToManyRelationshipToNonVersionedClass
+):
+    articles_lazy = 'joined'

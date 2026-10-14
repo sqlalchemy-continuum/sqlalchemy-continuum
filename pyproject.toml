@@ -29,7 +29,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 dependencies = [
-    "SQLAlchemy>=1.4.53,<2.2"
+    "SQLAlchemy>=2.0.2,<2.2"
 ]
 
 # Extras are user-facing features only; development dependencies live in
@@ -112,11 +112,6 @@ test = [
     "Flask>=2.0",
     "Flask-Login>=0.6",
     "Flask-SQLAlchemy>=3.0",
-    "packaging",
-]
-# Separate from `test` because SQLModel requires SQLAlchemy 2.x; the
-# SQLAlchemy 1.4 test runs skip it.
-test-sqlmodel = [
     "SQLModel>=0.0.24",
 ]
 docs = [
@@ -128,7 +123,6 @@ lint = [
 ]
 dev = [
     { include-group = "test" },
-    { include-group = "test-sqlmodel" },
     { include-group = "docs" },
     { include-group = "lint" },
     "tox>=4.27",

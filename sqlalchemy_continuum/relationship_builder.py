@@ -60,19 +60,6 @@ class RelationshipBuilder:
         session = sa.orm.object_session(obj)
         return session.query(self.remote_cls).filter(self.criteria(obj))
 
-    def process_query(self, query):
-        """
-        Process given SQLAlchemy Query object depending on the associated
-        RelationshipProperty object.
-
-        :param query: SQLAlchemy Query object
-        """
-        if self.property.lazy == 'dynamic':
-            return query
-        if self.property.uselist is False:
-            return query.first()
-        return query.all()
-
     def criteria(self, obj):
         direction = self.property.direction
 
@@ -224,8 +211,16 @@ class RelationshipBuilder:
 
         @property
         def relationship(obj):
-            query = self.query(obj)
-            return self.process_query(query)
+            # Dynamic relationships return a Query, like their parent ones.
+            if self.property.lazy == 'dynamic':
+                return self.query(obj)
+            session = sa.orm.object_session(obj)
+            query = sa.select(self.remote_cls).where(self.criteria(obj))
+            if self.property.uselist is False:
+                return session.scalars(query.limit(1)).first()
+            # Non-versioned targets may joined-eager-load collections, which
+            # requires unique() (Query.all() applied it implicitly).
+            return session.scalars(query).unique().all()
 
         return relationship
 

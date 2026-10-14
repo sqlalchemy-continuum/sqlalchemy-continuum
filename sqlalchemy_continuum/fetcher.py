@@ -38,14 +38,15 @@ class VersionObjectFetcher:
         history. If current version is the first version this method returns
         None.
         """
-        return self.previous_query(obj).first()
+        session = sa.orm.object_session(obj)
+        return session.scalars(self.previous_query(obj).limit(1)).first()
 
     def index(self, obj):
         """
         Return the index of this version in the version history.
         """
         session = sa.orm.object_session(obj)
-        return session.execute(self._index_query(obj)).fetchone()[0]
+        return session.scalar(self._index_query(obj))
 
     def next(self, obj):
         """
@@ -53,7 +54,8 @@ class VersionObjectFetcher:
         history. If current version is the last version this method returns
         None.
         """
-        return self.next_query(obj).first()
+        session = sa.orm.object_session(obj)
+        return session.scalars(self.next_query(obj).limit(1)).first()
 
     def version_at(
         self, session, version_cls, primary_key_values: dict, transaction_id: int
@@ -101,11 +103,11 @@ class VersionObjectFetcher:
         """
         tx_col = tx_column_name(version_cls)
 
-        query = session.query(version_cls)
+        query = sa.select(version_cls)
 
         # Add primary key filters
         for pk_name, pk_value in primary_key_values.items():
-            query = query.filter(getattr(version_cls, pk_name) == pk_value)
+            query = query.where(getattr(version_cls, pk_name) == pk_value)
 
         # Order by transaction_id
         if desc:
@@ -119,7 +121,7 @@ class VersionObjectFetcher:
         if limit is not None:
             query = query.limit(limit)
 
-        return query.all()
+        return session.scalars(query).all()
 
     def link_versions(self, versions: list, desc: bool = True) -> list:
         """
@@ -193,12 +195,10 @@ class VersionObjectFetcher:
         return query.scalar_subquery()
 
     def _next_prev_query(self, obj, next_or_prev='next'):
-        session = sa.orm.object_session(obj)
-
         subquery = self._transaction_id_subquery(obj, next_or_prev=next_or_prev)
         subquery = subquery.scalar_subquery()
 
-        return session.query(obj.__class__).filter(
+        return sa.select(obj.__class__).where(
             sa.and_(
                 getattr(obj.__class__, tx_column_name(obj)) == subquery,
                 *parent_criteria(obj),
@@ -269,14 +269,14 @@ class SubqueryFetcher(VersionObjectFetcher):
         ]
 
         # Find the version with highest transaction_id <= target
-        return (
-            session.query(version_cls)
-            .filter(
+        return session.scalars(
+            sa.select(version_cls)
+            .where(
                 sa.and_(getattr(version_cls, tx_col) <= transaction_id, *pk_conditions)
             )
             .order_by(getattr(version_cls, tx_col).desc())
-            .first()
-        )
+            .limit(1)
+        ).first()
 
 
 class ValidityFetcher(VersionObjectFetcher):
@@ -285,9 +285,7 @@ class ValidityFetcher(VersionObjectFetcher):
         Returns the query that fetches the next version relative to this
         version in the version history.
         """
-        session = sa.orm.object_session(obj)
-
-        return session.query(obj.__class__).filter(
+        return sa.select(obj.__class__).where(
             sa.and_(
                 getattr(obj.__class__, tx_column_name(obj))
                 == getattr(obj, end_tx_column_name(obj)),
@@ -300,9 +298,7 @@ class ValidityFetcher(VersionObjectFetcher):
         Returns the query that fetches the previous version relative to this
         version in the version history.
         """
-        session = sa.orm.object_session(obj)
-
-        return session.query(obj.__class__).filter(
+        return sa.select(obj.__class__).where(
             sa.and_(
                 getattr(obj.__class__, end_tx_column_name(obj))
                 == getattr(obj, tx_column_name(obj)),
@@ -337,9 +333,9 @@ class ValidityFetcher(VersionObjectFetcher):
 
         # Find version where transaction_id <= target AND
         # (end_transaction_id > target OR end_transaction_id IS NULL)
-        return (
-            session.query(version_cls)
-            .filter(
+        return session.scalars(
+            sa.select(version_cls)
+            .where(
                 sa.and_(
                     getattr(version_cls, tx_col) <= transaction_id,
                     sa.or_(
@@ -349,5 +345,5 @@ class ValidityFetcher(VersionObjectFetcher):
                     *pk_conditions,
                 )
             )
-            .first()
-        )
+            .limit(1)
+        ).first()

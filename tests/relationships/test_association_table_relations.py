@@ -1,5 +1,4 @@
 import sqlalchemy as sa
-from packaging import version as py_pkg_version
 from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy.orm import relationship
 
@@ -19,11 +18,8 @@ class AssociationTableRelationshipsTestCase(TestCase):
 
             article_id = sa.Column(sa.Integer, sa.ForeignKey('article.id'))
             author_id = sa.Column(sa.Integer, sa.ForeignKey('author.id'))
-            relationship_kwargs = {}
-            if py_pkg_version.parse(sa.__version__) >= py_pkg_version.parse('1.4.0'):
-                relationship_kwargs.update({'overlaps': 'articles'})
-            author = relationship('Author', **relationship_kwargs)
-            article = relationship('Article', **relationship_kwargs)
+            author = relationship('Author', overlaps='articles')
+            article = relationship('Article', overlaps='articles')
 
         self.PublishedArticle = PublishedArticle
 

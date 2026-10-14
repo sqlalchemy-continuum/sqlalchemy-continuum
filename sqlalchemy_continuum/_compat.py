@@ -124,7 +124,7 @@ def get_columns(mixed):
     if isinstance(mixed, sa.sql.selectable.Selectable):
         try:
             return mixed.selected_columns
-        except AttributeError:  # SQLAlchemy <1.4
+        except AttributeError:  # Tables and aliases have no selected_columns
             return mixed.c
     if isinstance(mixed, sa.orm.util.AliasedClass):
         return sa.inspect(mixed).mapper.columns
@@ -293,12 +293,8 @@ def has_changes(obj, attrs=None, exclude=None):
 def _get_class_registry(class_):
     """
     Helper function to get the class registry for SQLAlchemy models.
-    Handles differences between SQLAlchemy versions.
     """
-    try:
-        return class_.registry._class_registry
-    except AttributeError:  # SQLAlchemy <1.4
-        return class_._decl_class_registry
+    return class_.registry._class_registry
 
 
 # ==============================================================================

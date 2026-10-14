@@ -1,5 +1,4 @@
 import sqlalchemy as sa
-from packaging import version as py_pkg_version
 
 from tests import TestCase, create_test_cases
 
@@ -24,18 +23,12 @@ class CustomConditionRelationsTestCase(TestCase):
             article_id = sa.Column(sa.Integer, sa.ForeignKey(Article.id))
             category = sa.Column(sa.Unicode(20))
 
-        if py_pkg_version.parse(sa.__version__) < py_pkg_version.parse('1.4.0'):
-            primary_key_overlaps = {}
-            secondary_key_overlaps = {}
-        else:
-            primary_key_overlaps = {'overlaps': 'secondary_tags, Article'}
-            secondary_key_overlaps = {'overlaps': 'primary_tags, Article'}
         Article.primary_tags = sa.orm.relationship(
             Tag,
             primaryjoin=sa.and_(
                 Tag.article_id == Article.id, Tag.category == 'primary'
             ),
-            **primary_key_overlaps,
+            overlaps='secondary_tags, Article',
         )
 
         Article.secondary_tags = sa.orm.relationship(
@@ -43,7 +36,7 @@ class CustomConditionRelationsTestCase(TestCase):
             primaryjoin=sa.and_(
                 Tag.article_id == Article.id, Tag.category == 'secondary'
             ),
-            **secondary_key_overlaps,
+            overlaps='primary_tags, Article',
         )
 
         self.Article = Article

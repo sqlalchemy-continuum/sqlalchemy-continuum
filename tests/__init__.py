@@ -116,8 +116,7 @@ class TestCase:
         self.create_schema('other')
         self.session.commit()
 
-        # Using an engine here instead of connection will call commit for us,
-        # which lets us use the same syntax for 1.4 and 2.0
+        # Using an engine here instead of connection will call commit for us
         self.Model.metadata.create_all(self.engine)
 
     def teardown_method(self, method):

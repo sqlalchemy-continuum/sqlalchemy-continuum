@@ -231,14 +231,14 @@ def vacuum(session, model, yield_per=1000):
     versions = defaultdict(list)
 
     query = (
-        session.query(version_cls).order_by(
-            option(version_cls, 'transaction_column_name')
-        )
-    ).yield_per(yield_per)
+        sa.select(version_cls)
+        .order_by(getattr(version_cls, option(version_cls, 'transaction_column_name')))
+        .execution_options(yield_per=yield_per)
+    )
 
     primary_key_col = sa.inspection.inspect(model).primary_key[0].name
 
-    for version in query:
+    for version in session.scalars(query):
         version_id = getattr(version, primary_key_col)
         if versions[version_id]:
             prev_version = versions[version_id][-1]
@@ -364,7 +364,7 @@ def count_versions(obj):
     query = sa.text(f'SELECT COUNT(1) FROM {table_name} WHERE {" AND ".join(criteria)}')
     # SQLAlchemy 2.1 autoflushes Core statements; counting must not write versions.
     with session.no_autoflush:
-        return session.execute(query).scalar()
+        return session.scalar(query)
 
 
 def changeset(obj):
