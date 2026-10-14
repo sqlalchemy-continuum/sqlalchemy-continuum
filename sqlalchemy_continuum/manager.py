@@ -12,6 +12,19 @@ from .transaction import TransactionFactory
 from .unit_of_work import UnitOfWork
 from .utils import is_modified, is_versioned, version_table
 
+#: Key under which the active :class:`.UnitOfWork` is stored on
+#: ``connection.info``. Because ``Connection.info`` proxies to the underlying
+#: pooled DBAPI connection, every ``Connection`` clone sharing that DBAPI
+#: connection sees the same object, and each thread has its own connection --
+#: so this scoping is naturally thread-safe.
+UOW_KEY = 'continuum_unit_of_work'
+
+#: Key under which a session's bound ``Connection`` is remembered on
+#: ``session.info`` so the unit of work can be cleaned up at commit time
+#: without calling ``session.connection()`` (which would begin a new
+#: transaction).
+CONN_KEY = 'continuum_connection'
+
 
 def tracked_operation(func):
     @wraps(func)
@@ -140,12 +153,6 @@ class VersioningManager:
             'instrument_class': self.builder.instrument_versioned_classes,
             'after_configured': self.builder.configure_versioned_classes,
         }
-
-        # A dictionary of units of work. Keys as connection objects and values
-        # as UnitOfWork objects.
-        self.units_of_work = {}
-
-        self.session_connection_map = {}
 
         self.metadata = None
 
@@ -306,34 +313,26 @@ class VersioningManager:
 
         :param session: SQLAlchemy session object
         """
-        conn = session.connection()
-        if conn not in self.session_connection_map.values():
-            self.session_connection_map[session] = conn
+        connection = session.connection()
+        session.info[CONN_KEY] = connection
+        return self._uow_from_conn(connection)
 
-        if conn in self.units_of_work:
-            return self.units_of_work[conn]
-        else:
+    def _uow_from_conn(self, connection):
+        """
+        Return the UnitOfWork associated with the given SQLAlchemy connection,
+        creating one if necessary.
+
+        The unit of work is stored on ``connection.info``, which proxies to the
+        underlying pooled DBAPI connection. All ``Connection`` clones sharing
+        that DBAPI connection therefore resolve to the same UnitOfWork, so no
+        clone bookkeeping is required.
+
+        :param connection: SQLAlchemy connection object
+        """
+        uow = connection.info.get(UOW_KEY)
+        if uow is None:
             uow = self.uow_class(self)
-            self.units_of_work[conn] = uow
-            return uow
-
-    def _uow_from_conn(self, conn):
-        try:
-            uow = self.units_of_work[conn]
-        except KeyError:
-            try:
-                uow = self.units_of_work[conn.engine]
-            except KeyError:
-                for connection in self.units_of_work.keys():
-                    if (
-                        not connection.closed
-                        and connection.connection is conn.connection
-                    ):
-                        uow = self.unit_of_work(conn.session)
-                        break  # The ConnectionFairy is the same, this connection is a clone
-                else:
-                    raise
-
+            connection.info[UOW_KEY] = uow
         return uow
 
     def before_flush(self, session, flush_context, instances):
@@ -375,36 +374,38 @@ class VersioningManager:
         """
         if session.in_nested_transaction():
             return
-        conn = self.session_connection_map.pop(session, None)
-        if conn is None:
+        connection = session.info.pop(CONN_KEY, None)
+        if connection is None:
             return
 
-        if conn in self.units_of_work:
-            uow = self.units_of_work[conn]
+        uow = connection.info.pop(UOW_KEY, None)
+        if uow is not None:
             uow.reset(session)
-            del self.units_of_work[conn]
 
-        for connection in dict(self.units_of_work).keys():
-            if connection.closed or conn.connection is connection.connection:
-                uow = self.units_of_work[connection]
-                uow.reset(session)
-                del self.units_of_work[connection]
+    def clear_connection(self, connection):
+        """
+        Engine ``rollback`` listener that discards the UnitOfWork associated
+        with the given connection.
 
-    def clear_connection(self, conn):
-        if conn in self.units_of_work:
-            uow = self.units_of_work[conn]
+        :param connection: SQLAlchemy connection object
+        """
+        uow = connection.info.pop(UOW_KEY, None)
+        if uow is not None:
             uow.reset()
-            del self.units_of_work[conn]
 
-        for session, connection in dict(self.session_connection_map).items():
-            if connection is conn:
-                del self.session_connection_map[session]
+    def clear_connection_on_reset(
+        self, dbapi_connection, connection_record, reset_state=None
+    ):
+        """
+        Pool ``reset`` listener acting as a safety net: whenever a DBAPI
+        connection is returned to the pool, drop any lingering UnitOfWork so it
+        cannot leak into a later checkout of the same connection.
 
-        for connection in dict(self.units_of_work).keys():
-            if connection.closed or conn.connection is connection.connection:
-                uow = self.units_of_work[connection]
-                uow.reset()
-                del self.units_of_work[connection]
+        ``connection_record.info`` is the same dictionary that
+        ``Connection.info`` exposes, so this reliably clears the state
+        regardless of how the transaction ended.
+        """
+        connection_record.info.pop(UOW_KEY, None)
 
     def append_association_operation(self, conn, table_name, params, op):
         """
@@ -417,17 +418,6 @@ class VersioningManager:
         )
         uow = self._uow_from_conn(conn)
         uow.pending_statements.append(stmt)
-
-    def track_cloned_connections(self, c, opt):
-        """
-        Track cloned connections from association tables.
-        """
-        if c not in self.units_of_work.keys():
-            for connection, uow in dict(self.units_of_work).items():
-                if (
-                    not connection.closed and connection.connection is c.connection
-                ):  # ConnectionFairy is the same - this is a clone
-                    self.units_of_work[c] = uow
 
     def track_association_operations(
         self,
