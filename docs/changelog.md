@@ -4,7 +4,8 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 ## Unreleased changes
 
-- Add support for versioning [SQLModel](https://sqlmodel.tiangolo.com) table models (SQLModel requires SQLAlchemy 2.0+) (#271)
+- Drop SQLAlchemy 1.4 support (EOL; its last release, 1.4.54, shipped in September 2024); the supported range is now `>=2.0.2,<2.2`. Projects still on SQLAlchemy 1.4 can stay on SQLAlchemy-Continuum 1.9.x
+- Add support for versioning [SQLModel](https://sqlmodel.tiangolo.com) table models (#271)
 
 ## 1.9.0 (2026-10-13)
 

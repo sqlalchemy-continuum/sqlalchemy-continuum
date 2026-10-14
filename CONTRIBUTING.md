@@ -39,7 +39,7 @@ DB=sqlite uv run pytest
 
 To test against PostgreSQL or MySQL, start a local server and set `DB` to
 `postgres`, `postgres-native`, or `mysql` (see `tests/__init__.py` for the
-connection defaults). The full matrix (Python versions × SQLAlchemy 1.4/2.x)
+connection defaults). The full matrix (Python versions × SQLAlchemy 2.0/2.1)
 runs via tox:
 
 ```bash

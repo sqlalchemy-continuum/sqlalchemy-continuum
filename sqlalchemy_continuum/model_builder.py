@@ -73,13 +73,6 @@ def copy_mapper_args(model):
             if arg in model.__mapper_args__:
                 args[arg] = model.__mapper_args__[arg]
 
-        if 'order_by' in model.__mapper_args__:
-            arg = model.__mapper_args__['order_by']
-            # Only allow string based order_by reflection to version
-            # classes.
-            if isinstance(arg, str):
-                args['order_by'] = arg
-
         if 'polymorphic_on' in model.__mapper_args__:
             column = model.__mapper_args__['polymorphic_on']
             if isinstance(column, str):

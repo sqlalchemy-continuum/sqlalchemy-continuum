@@ -877,7 +877,6 @@ dev = [
     { name = "flask-login" },
     { name = "flask-sqlalchemy" },
     { name = "mkdocstrings-python" },
-    { name = "packaging" },
     { name = "pre-commit" },
     { name = "psycopg2" },
     { name = "pymysql" },
@@ -898,12 +897,9 @@ test = [
     { name = "flask" },
     { name = "flask-login" },
     { name = "flask-sqlalchemy" },
-    { name = "packaging" },
     { name = "psycopg2" },
     { name = "pymysql" },
     { name = "pytest" },
-]
-test-sqlmodel = [
     { name = "sqlmodel" },
 ]
 
@@ -912,7 +908,7 @@ requires-dist = [
     { name = "flask", marker = "extra == 'flask'", specifier = ">=2.0" },
     { name = "flask-login", marker = "extra == 'flask-login'", specifier = ">=0.6" },
     { name = "flask-sqlalchemy", marker = "extra == 'flask-sqlalchemy'", specifier = ">=3.0" },
-    { name = "sqlalchemy", specifier = ">=1.4.53,<2.2" },
+    { name = "sqlalchemy", specifier = ">=2.0.2,<2.2" },
 ]
 provides-extras = ["flask", "flask-login", "flask-sqlalchemy"]
 
@@ -922,7 +918,6 @@ dev = [
     { name = "flask-login", specifier = ">=0.6" },
     { name = "flask-sqlalchemy", specifier = ">=3.0" },
     { name = "mkdocstrings-python", specifier = ">=1.16" },
-    { name = "packaging" },
     { name = "pre-commit", specifier = ">=4.3" },
     { name = "psycopg2", specifier = ">=2.9" },
     { name = "pymysql", specifier = ">=1.0" },
@@ -941,12 +936,11 @@ test = [
     { name = "flask", specifier = ">=2.0" },
     { name = "flask-login", specifier = ">=0.6" },
     { name = "flask-sqlalchemy", specifier = ">=3.0" },
-    { name = "packaging" },
     { name = "psycopg2", specifier = ">=2.9" },
     { name = "pymysql", specifier = ">=1.0" },
     { name = "pytest", specifier = ">=7.0" },
+    { name = "sqlmodel", specifier = ">=0.0.24" },
 ]
-test-sqlmodel = [{ name = "sqlmodel", specifier = ">=0.0.24" }]
 
 [[package]]
 name = "sqlmodel"

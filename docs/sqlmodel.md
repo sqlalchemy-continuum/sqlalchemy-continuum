@@ -1,6 +1,6 @@
 # SQLModel
 
-SQLAlchemy-Continuum versions [SQLModel](https://sqlmodel.tiangolo.com) table models the same way as plain SQLAlchemy models. Call `make_versioned()` before your models are defined, add `__versioned__` to the models you want to version and call `configure_mappers()` once all of them are defined. SQLModel requires SQLAlchemy 2.0 or newer.
+SQLAlchemy-Continuum versions [SQLModel](https://sqlmodel.tiangolo.com) table models the same way as plain SQLAlchemy models. Call `make_versioned()` before your models are defined, add `__versioned__` to the models you want to version and call `configure_mappers()` once all of them are defined.
 
 ```python
 import sqlalchemy as sa
