@@ -114,6 +114,11 @@ test = [
     "Flask-SQLAlchemy>=3.0",
     "packaging",
 ]
+# Separate from `test` because SQLModel requires SQLAlchemy 2.x; the
+# SQLAlchemy 1.4 test runs skip it.
+test-sqlmodel = [
+    "SQLModel>=0.0.24",
+]
 docs = [
     "zensical>=0.0.46",
     "mkdocstrings-python>=1.16",
@@ -123,6 +128,7 @@ lint = [
 ]
 dev = [
     { include-group = "test" },
+    { include-group = "test-sqlmodel" },
     { include-group = "docs" },
     { include-group = "lint" },
     "tox>=4.27",

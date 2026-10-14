@@ -5,9 +5,8 @@ from inspect import getmro
 import sqlalchemy as sa
 from sqlalchemy.orm.descriptor_props import ConcreteInheritedProperty
 
-from ._compat import get_declarative_base
 from .dialects.postgresql import create_versioning_trigger_listeners
-from .model_builder import ModelBuilder
+from .model_builder import ModelBuilder, resolve_declarative_base
 from .relationship_builder import RelationshipBuilder
 from .table_builder import TableBuilder
 
@@ -148,7 +147,7 @@ class Builder:
     def build_transaction_class(self):
         if self.manager.pending_classes:
             cls = self.manager.pending_classes[0]
-            self.manager.declarative_base = get_declarative_base(cls)
+            self.manager.declarative_base = resolve_declarative_base(cls)
             self.manager.create_transaction_model()
             self.manager.plugins.after_build_tx_class(self.manager)
 
