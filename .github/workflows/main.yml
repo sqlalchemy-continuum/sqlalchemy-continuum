@@ -97,8 +97,9 @@ jobs:
         run: uv pip install -e . --group test 'sqlalchemy${{ matrix.sqlalchemy-version }}'
       - name: Run tests
         # --no-sync keeps uv run from re-syncing uv.lock over the
-        # matrix-pinned SQLAlchemy version.
-        run: uv run --no-sync pytest
+        # matrix-pinned SQLAlchemy version; --python stops it warning that
+        # the venv doesn't match the .python-version pin.
+        run: uv run --no-sync --python ${{ matrix.python-version }} pytest
         env:
           DB: ${{ matrix.db-engine }}
 
