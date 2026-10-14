@@ -37,7 +37,7 @@ from .utils import (
     version_class as version_class,
 )
 
-__version__ = '1.9.0'
+__version__ = '2.0.0'
 
 
 versioning_manager = VersioningManager()
