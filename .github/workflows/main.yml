@@ -95,7 +95,11 @@ jobs:
       - name: Install dependencies
         # Single resolution so the SQLAlchemy pin constrains the test
         # group (Flask-SQLAlchemy 3.1+ would otherwise drag in SQLAlchemy 2.x).
-        run: uv pip install -e . --group test 'sqlalchemy${{ matrix.sqlalchemy-version }}'
+        # SQLModel requires SQLAlchemy 2.x, so the 1.4 leg skips its group.
+        run: >-
+          uv pip install -e . --group test
+          ${{ !startsWith(matrix.sqlalchemy-version, '>=1.4') && '--group test-sqlmodel' || '' }}
+          'sqlalchemy${{ matrix.sqlalchemy-version }}'
       - name: Run tests
         # --no-sync keeps uv run from re-syncing uv.lock over the
         # matrix-pinned SQLAlchemy version.

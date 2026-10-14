@@ -20,6 +20,7 @@ covers the [feature set](intro.md#features), installation and basic usage.
 - [Plugins](plugins.md)
 - [Configuration](configuration.md)
 - [Continuum schema](schema.md)
+- [SQLModel](sqlmodel.md)
 - [Alembic migrations](alembic.md)
 - [Utilities](utilities.md)
 - [API reference](api.md)

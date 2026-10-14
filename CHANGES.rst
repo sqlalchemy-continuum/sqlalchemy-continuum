@@ -5,7 +5,7 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
-- TODO
+- Add support for versioning `SQLModel <https://sqlmodel.tiangolo.com>`_ table models (SQLModel requires SQLAlchemy 2.0+) (#271)
 
 1.9.0 (2026-10-13)
 ^^^^^^^^^^^^^^^^^^

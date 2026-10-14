@@ -20,6 +20,7 @@ nav = [
     "plugins.md",
     "configuration.md",
     "schema.md",
+    "sqlmodel.md",
     "alembic.md",
   ] },
   { "API Reference" = [
