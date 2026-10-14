@@ -218,7 +218,9 @@ class RelationshipBuilder:
             query = sa.select(self.remote_cls).where(self.criteria(obj))
             if self.property.uselist is False:
                 return session.scalars(query.limit(1)).first()
-            return session.scalars(query).all()
+            # Non-versioned targets may joined-eager-load collections, which
+            # requires unique() (Query.all() applied it implicitly).
+            return session.scalars(query).unique().all()
 
         return relationship
 
