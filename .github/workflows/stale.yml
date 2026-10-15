@@ -1,0 +1,38 @@
+name: Stale issues
+
+on:
+  schedule:
+    - cron: '30 4 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write  # the action caches its progress between runs
+      issues: write
+      pull-requests: read
+    steps:
+      - uses: actions/stale@v11
+        with:
+          days-before-issue-stale: 180
+          days-before-issue-close: 30
+          # Pull requests are left alone.
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-label: stale
+          # The bug template labels every report `bug`, so only these
+          # maintainer-applied labels keep an issue open indefinitely.
+          exempt-issue-labels: pinned,next-release
+          stale-issue-message: >
+            This issue has had no activity for six months, so it has been
+            marked stale and will be closed in 30 days. If it still applies
+            to the latest release, leave a comment (with a reproduction for
+            bugs) and it will stay open.
+          close-issue-message: >
+            Closed after 30 more days without activity. If this still
+            applies to the latest release, please open a new issue with a
+            reproduction and link back to this one.
