@@ -89,11 +89,7 @@ def make_versioned(
 
     sa.event.listen(sa.engine.Engine, 'rollback', manager.clear_connection)
 
-    sa.event.listen(
-        sa.engine.Engine,
-        'set_connection_execution_options',
-        manager.track_cloned_connections,
-    )
+    sa.event.listen(sa.engine.Engine, 'reset', manager.clear_connection_on_reset)
 
 
 def remove_versioning(
@@ -120,8 +116,4 @@ def remove_versioning(
 
     sa.event.remove(sa.engine.Engine, 'rollback', manager.clear_connection)
 
-    sa.event.remove(
-        sa.engine.Engine,
-        'set_connection_execution_options',
-        manager.track_cloned_connections,
-    )
+    sa.event.remove(sa.engine.Engine, 'reset', manager.clear_connection_on_reset)
