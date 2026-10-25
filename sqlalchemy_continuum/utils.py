@@ -332,7 +332,12 @@ def is_session_modified(session):
 
     See also: `is_versioned`, `versioned_objects`
     """
-    return any(is_modified_or_deleted(obj) for obj in versioned_objects(session))
+    # Only new, dirty and deleted objects can be modified, so skip the rest of
+    # the identity map rather than checking every clean object on each flush.
+    return any(
+        is_modified_or_deleted(obj)
+        for obj in chain(session.new, session.dirty, session.deleted)
+    )
 
 
 def count_versions(obj):
