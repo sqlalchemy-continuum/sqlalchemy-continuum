@@ -5,7 +5,7 @@ Here you can see the full list of changes between each SQLAlchemy-Continuum rele
 
 Unreleased changes
 ^^^^^^^^^^^^^^^^^^
-- TODO
+- Speed up flushes in sessions that hold many objects: ``is_session_modified()`` now checks only new, dirty and deleted objects instead of every object in the session, so a transaction that flushes many times no longer slows down quadratically (#406)
 
 2.0.0 (2026-10-14)
 ^^^^^^^^^^^^^^^^^^
